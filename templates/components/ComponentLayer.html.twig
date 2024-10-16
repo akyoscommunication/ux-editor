@@ -1,0 +1,17 @@
+<div {{ attributes.defaults({class: "block"}) }}>
+    {% if component.children|length %}
+        <details>
+            <summary class="mb-4"><label class="flex items-center gap-2"><input type="checkbox"> <p sortable-handle>{{ component }}</p></label></summary>
+            <ul>
+                {% for key, component in component.children %}
+                    <li>
+                        <twig:Editor:ComponentLayer :component="component"/>
+                    </li>
+                {% endfor %}
+            </ul>
+        </details>
+    {% else %}
+        <label class="flex items-center gap-2"><input type="checkbox"> <p sortable-handle>{{ component }}</p></label>
+    {% endif %}
+</div>
+

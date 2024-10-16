@@ -1,0 +1,50 @@
+<div{{ attributes.defaults({class: 'bg-gray-800 p-0 flex flex-col h-screen text-white'}) }}>
+    <div class="flex items-center justify-end gap-2.5 p-2">
+        <button type="button" {{ stimulus_action('editor', 'close') }}><twig:ux:icon name="bitcoin-icons:cross-filled" class="w-10 h-10"/></button>
+    </div>
+    <div class="border-y border-gray-700/50 flex items-center justify-center gap-2.5 p-2">
+        <button type="button" class="rounded bg-gray-800 p-1"><twig:ux:icon name="quill:desktop" /></button>
+        <button type="button" class="rounded bg-gray-800 p-1"><twig:ux:icon name="bi:laptop" /></button>
+        <button type="button" class="rounded bg-gray-800 p-1"><twig:ux:icon name="bi:tablet" /></button>
+        <button type="button" class="rounded bg-gray-800 p-1"><twig:ux:icon name="bi:phone" /></button>
+    </div>
+    <div class="flex-1 flex flex-nowrap">
+        <aside class="max-w-80 bg-gray-800 p-3 h-full">
+            <section id="Elements" {{ stimulus_target('editor', 'draggableContainer sortableContainer') }}>
+                {% for category, component in components %}
+                    <details open>
+                        <summary class="mb-4">{{ category }}</summary>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                            {% for c in component %}
+                                <li>
+                                    <div class="rounded-2xl bg-gray-700/50 py-5 px-3 flex flex-col items-center justify-center gap-2 overflow-hidden text-ellipsis text-xs text-center h-full cursor-grab" data-component="{{ c.twigName }}" draggable sortable sortable-handle>
+                                        <twig:ux:icon :name="c.metadata.icon" class="w-6 h-6" />
+                                        {{ c.metadata.label }}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </details>
+                {% endfor %}
+            </section>
+            <section id="Layers" class="mt-20">
+                <h2>Layers</h2>
+                <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} id="LayersElements">
+                    {% for key, component in value.components %}
+                        <twig:Editor:ComponentLayer :keyOfComponent="key" key="{{ component.id }}" :component="component" sortable class="cursor-move"/>
+                    {% endfor %}
+                </div>
+            </section>
+        </aside>
+        <div id="ElementsEdits" class="flex-1 bg-gray-900 px-4 py-11 flex flex-col gap-2" {{ stimulus_target('editor', 'droppableContainer sortableContainer') }}>
+            {% for key, component in value.components %}
+                <twig:Editor:ComponentEdit :component="component" data-editor-target="edits" sortable :keyOfComponent="key" key="{{ component.id }}"/>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="flex items-center justify-end gap-2.5 p-2">
+        <button type="button" class="border border-indigo-800 text-indigo-800 p-3.5"><twig:ux:icon name="carbon:return" /></button>
+        <button type="button" class="border border-indigo-800 bg-indigo-800 text-white p-3.5 w-full max-w-44" {{ stimulus_action('editor', 'save') }}>Valider</button>
+{#        <button type="button" class="border border-indigo-800 bg-indigo-800 text-white p-3.5 w-full max-w-44" data-action="live#emit" data-live-event-param="editor:sync">Valider</button>#}
+    </div>
+</div>

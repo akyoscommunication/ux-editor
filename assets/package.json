@@ -1,0 +1,46 @@
+{
+    "name": "@akyos/ux-editor",
+    "description": "UX editor using Live component",
+    "main": "src/main.js",
+    "version": "1.0.0",
+    "config": {
+        "css_source": "src/main.css"
+    },
+    "license": "MIT",
+    "symfony": {
+        "controllers": {
+            "editor": {
+                "main": "src/controllers/editor_controller.js",
+                "name": "editor",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "editor-edit": {
+                "main": "src/controllers/editor-edit_controller.js",
+                "name": "editor-edit",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.0.0",
+            "@ux-editor": "path:%PACKAGE%/src/main.js",
+            "@shopify/draggable": "1.1.3"
+        }
+    },
+    "dependencies": {
+        "@shopify/draggable": "^1.1.3"
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.0.0"
+    },
+    "devDependencies": {
+        "@hotwired/stimulus": "^3.0.0",
+        "@testing-library/dom": "^7.31.0",
+        "@testing-library/user-event": "^13.1.9",
+        "@types/node-fetch": "^2.6.2",
+        "node-fetch": "^2.6.1"
+    }
+}

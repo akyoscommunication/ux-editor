@@ -1,0 +1,7 @@
+<div{{ attributes }}>
+    {% for c in content.components %}
+        {% if c.type and c.data %}
+            {{ component(c.type, c.data|map(d => d.value)) }}
+        {% endif %}
+    {% endfor %}
+</div>
