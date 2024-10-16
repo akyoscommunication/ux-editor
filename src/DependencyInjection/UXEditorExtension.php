@@ -22,7 +22,7 @@ class UXEditorExtension extends Extension implements PrependExtensionInterface
             $container->prependExtensionConfig('framework', [
                 'asset_mapper' => [
                     'paths' => [
-                        __DIR__.'/../../assets' => '@ux-editor',
+                        __DIR__.'/../../assets/src' => '@ux-editor',
                     ],
                 ],
             ]);
