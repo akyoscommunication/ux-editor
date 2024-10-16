@@ -6,15 +6,27 @@ export default class extends Controller {
     static targets = ['editor', 'input', 'modal', 'sortableItem', 'draggableContainer', 'droppableContainer', 'sortableContainer'];
     
     async initialize() {
+        // while the editor is not loaded we can't do anything
+        while (!this.editorTarget.__component) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        
         this.editor = this.editorTarget.__component;
         this.eligibleDroppableContainers = this.droppableContainerTargets;
+        
+        this.connect();
     }
     
     connect() {
+        if (!this.editor) {
+            return;
+        }
+        
         this.initializeEligibleDroppableContainers();
         
         // to initialize the value of the input with the value
         this.inputTarget.dispatchEvent(new CustomEvent('change', { bubbles: true }));
+        
         
         this.editor.on('render:finished', () => {
             // is not selected

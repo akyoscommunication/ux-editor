@@ -31,14 +31,14 @@
                 <h2>Layers</h2>
                 <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} id="LayersElements">
                     {% for key, component in value.components %}
-                        <twig:UXEditor:ComponentLayer :keyOfComponent="key" key="{{ component.id }}" :component="component" sortable class="cursor-move"/>
+                        <twig:UX:Editor:ComponentLayer :keyOfComponent="key" key="{{ component.id }}" :component="component" sortable class="cursor-move"/>
                     {% endfor %}
                 </div>
             </section>
         </aside>
         <div id="ElementsEdits" class="flex-1 bg-gray-900 px-4 py-11 flex flex-col gap-2" {{ stimulus_target('editor', 'droppableContainer sortableContainer') }}>
             {% for key, component in value.components %}
-                <twig:UXEditor:ComponentEdit :component="component" data-editor-target="edits" sortable :keyOfComponent="key" key="{{ component.id }}"/>
+                <twig:UX:Editor:ComponentEdit :component="component" data-editor-target="edits" sortable :keyOfComponent="key" key="{{ component.id }}"/>
             {% endfor %}
         </div>
     </div>

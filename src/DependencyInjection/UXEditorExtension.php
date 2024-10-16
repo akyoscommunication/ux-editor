@@ -20,10 +20,6 @@ class UXEditorExtension extends Extension implements PrependExtensionInterface
             $container->prependExtensionConfig('twig', ['form_themes' => ['@UXEditor/form_theme.html.twig']]);
         }
 
-        if (isset($bundles['TwigComponentBundle'])) {
-            $container->prependExtensionConfig('twig_component', ['defaults' => ['UXEditor\\Twig\\Components\\' => __DIR__.'/../../templates/components']]);
-        }
-
         if ($this->isAssetMapperAvailable($container)) {
             $container->prependExtensionConfig('framework', [
                 'asset_mapper' => [
@@ -54,5 +50,6 @@ class UXEditorExtension extends Extension implements PrependExtensionInterface
     {
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../../config'));
         $loader->load('services.php');
+        $loader->load('twig_component.php');
     }
 }
