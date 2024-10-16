@@ -2,7 +2,7 @@
 
 namespace Akyos\UXEditor\Attributes;
 
-use App\Model\Category;
+use Akyos\UXEditor\Model\Category;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class EditorComponent

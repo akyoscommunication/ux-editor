@@ -2,8 +2,7 @@
 
 namespace Akyos\UXEditor\Attributes;
 
-use App\Model\Category;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Akyos\UXEditor\Model\Category;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class EditorField
