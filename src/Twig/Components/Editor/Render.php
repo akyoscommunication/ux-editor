@@ -2,7 +2,7 @@
 
 namespace Akyos\UXEditor\Twig\Components\Editor;
 
-use Akyos\UXEditor\Model\Editor\Content;
+use Akyos\UXEditor\Model\Content;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]

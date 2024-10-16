@@ -1,6 +1,6 @@
 <?php
 
-namespace Akyos\UXEditor\Twig\Extension\Hydration;
+namespace Akyos\UXEditor\Hydration;
 
 use Akyos\UXEditor\Model\Data;
 use Symfony\UX\LiveComponent\Hydration\HydrationExtensionInterface;

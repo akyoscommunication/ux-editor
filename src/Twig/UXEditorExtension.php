@@ -1,8 +1,7 @@
 <?php
 
-namespace Akyos\UXEditor\Twig\Extension;
+namespace Akyos\UXEditor\Twig;
 
-use Akyos\UXEditor\Twig\Runtime\UXEditorExtensionRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 

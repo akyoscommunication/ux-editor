@@ -2,25 +2,25 @@
 
 namespace Akyos\UXEditor\Service;
 
-use Akyos\UXEditor\Model\Data;
-use Akyos\UXEditor\Form\Type\DataType;
-use Akyos\UXEditor\Model\Category;
-use Akyos\UXEditor\Attributes\EditorField;
-use Akyos\UXEditor\Model\Component;
 use Akyos\UXEditor\Attributes\EditorComponent;
+use Akyos\UXEditor\Attributes\EditorField;
+use Akyos\UXEditor\Form\Type\DataType;
+use Akyos\UXEditor\Form\Type\Editor\EditorEntityType;
+use Akyos\UXEditor\Form\Type\Editor\EditorFileType;
+use Akyos\UXEditor\Hydration\DataHydrationExtension;
+use Akyos\UXEditor\Model\Category;
+use Akyos\UXEditor\Model\Component;
+use Akyos\UXEditor\Model\Data;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\MappingException;
-use Symfony\Component\Finder\Finder;
-use Akyos\UXEditor\Form\Type\Editor\EditorFileType;
-use Akyos\UXEditor\Form\Type\Editor\EditorEntityType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Akyos\UXEditor\Twig\Extension\Hydration\DataHydrationExtension;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class EditorService
 {

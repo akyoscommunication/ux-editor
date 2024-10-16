@@ -1,10 +1,10 @@
 <?php
 
-namespace Akyos\UXEditor\Twig\Runtime;
+namespace Akyos\UXEditor\Twig;
 
+use Akyos\UXEditor\Hydration\ContentHydrationExtension;
 use Akyos\UXEditor\Model\Content;
 use Akyos\UXEditor\Service\EditorService;
-use Akyos\UXEditor\Twig\Extension\Hydration\ContentHydrationExtension;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class UXEditorExtensionRuntime implements RuntimeExtensionInterface

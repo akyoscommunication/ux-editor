@@ -2,13 +2,13 @@
 
 namespace Akyos\UXEditor\Twig\Components\Editor;
 
-use Akyos\UXEditor\Model\Editor\Component;
-use Akyos\UXEditor\Model\Editor\Content;
-use Akyos\UXEditor\Model\Editor\Data;
+use Akyos\UXEditor\Hydration\ComponentHydrationExtension;
+use Akyos\UXEditor\Hydration\ContentHydrationExtension;
+use Akyos\UXEditor\Hydration\DataHydrationExtension;
+use Akyos\UXEditor\Model\Component;
+use Akyos\UXEditor\Model\Content;
+use Akyos\UXEditor\Model\Data;
 use Akyos\UXEditor\Service\EditorService;
-use Akyos\UXEditor\Twig\Extension\Hydration\ContentHydrationExtension;
-use Akyos\UXEditor\Twig\Extension\Hydration\ComponentHydrationExtension;
-use Akyos\UXEditor\Twig\Extension\Hydration\DataHydrationExtension;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -120,7 +120,7 @@ final class Editor extends AbstractController
         $component = $components[$old];
         unset($components[$old]);
         array_splice($components, $new, 0, [$component]);
-    
+
         $this->value->setComponents(array_values($components));
 
         $this->saveToInput();
@@ -166,13 +166,13 @@ final class Editor extends AbstractController
         if (!empty($files)) {
             foreach ($files as $key => $file) {
                 $current = $this->getCurrentComponent($key);
-    
+
                 $datas = $file['data'];
-    
+
                 foreach ($datas as $k => $data) {
                     /** @var UploadedFile $value */
                     $value = $data['value'];
-    
+
                     // TODO: configure the path
                     $path = $this->getParameter('kernel.project_dir') . '/public/uploads';
                     $movedFile = $value->move($path, $value->getClientOriginalName());
