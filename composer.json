@@ -1,7 +1,7 @@
 {
   "name": "akyoscommunication/ux-editor",
   "type": "library",
-  "description": "Configurations to allow defining Symfony Workflows as PHP classes easily and little helpers functions to work with them.",
+  "description": "UX editor for Symfony",
   "keywords": ["ux", "symfony", "PHP", "attribute", "live component", "editor", "builder"],
   "license": "MIT",
   "authors": [
