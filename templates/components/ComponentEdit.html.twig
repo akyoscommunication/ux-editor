@@ -22,7 +22,7 @@
         {% if metadata.isContainer %}
             <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} class="c-component-edit__children border border-dashed border-2 border-sky-500 rounded-2xl mt-4" id="{{ keyOfComponent }}_children">
                 {% for k, child in c.children %}
-                    <twig:Editor:ComponentEdit :c="child" sortable :key="component.id" keyOfComponent="{{ keyOfComponent }}.{{ k }}"/>
+                    <twig:UXEditor:ComponentEdit :c="child" sortable :key="component.id" keyOfComponent="{{ keyOfComponent }}.{{ k }}"/>
                 {% endfor %}
 
                 <button type="button" class="flex flex-col items-center justify-center gap-2 text-sky-500 p-4 w-full" {{ stimulus_action('editor', 'setSortable') }}>
