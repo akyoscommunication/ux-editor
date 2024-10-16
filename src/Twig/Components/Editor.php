@@ -1,6 +1,6 @@
 <?php
 
-namespace Akyos\UXEditor\Twig\Components\Editor;
+namespace Akyos\UXEditor\Twig\Components;
 
 use Akyos\UXEditor\Hydration\ComponentHydrationExtension;
 use Akyos\UXEditor\Hydration\ContentHydrationExtension;
