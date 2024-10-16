@@ -25,7 +25,7 @@ return static function (ContainerConfigurator $container): void {
 
         ->set('.ux_editor.twig_editor_runtime', UXEditorExtensionRuntime::class)
         ->args([
-            service('.ux_editor.editor_component_hydration'),
+            service('.ux_editor.editor_content_hydration'),
             service('.ux_editor.editor_service'),
         ])
         ->tag('twig.runtime')
