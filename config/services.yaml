@@ -1,0 +1,15 @@
+services:
+    Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Akyos\UXEditor\:
+        resource: './../src/*'
+        exclude:
+            - './../src/DependencyInjection/'
+            - './../src/Model/'
+            - './../src/Attributes/'
+        tags: [ 'controller.service_arguments' ]
+        public: true

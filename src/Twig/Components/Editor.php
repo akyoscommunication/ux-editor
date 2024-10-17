@@ -21,7 +21,7 @@ use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
-#[AsLiveComponent]
+#[AsLiveComponent('UX:Editor', template: '@UXEditor/components/Editor.html.twig')]
 final class Editor extends AbstractController
 {
     use DefaultActionTrait, ComponentToolsTrait;

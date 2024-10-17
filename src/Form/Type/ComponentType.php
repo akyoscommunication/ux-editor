@@ -2,8 +2,8 @@
 
 namespace Akyos\UXEditor\Form\Type;
 
-use Akyos\UXEditor\Model\Editor\Component;
-use Akyos\UXEditor\Model\Editor\Data;
+use Akyos\UXEditor\Model\Component;
+use Akyos\UXEditor\Model\Data;
 use Akyos\UXEditor\Service\EditorService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;

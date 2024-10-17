@@ -10,7 +10,7 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent]
+#[AsLiveComponent('UX:Editor:ComponentLayer', template: '@UXEditor/components/ComponentLayer.html.twig')]
 final class ComponentLayer extends AbstractController
 {
     use DefaultActionTrait;

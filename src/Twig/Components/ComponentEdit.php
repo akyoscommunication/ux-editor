@@ -20,7 +20,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
-#[AsLiveComponent]
+#[AsLiveComponent('UX:Editor:ComponentEdit', template: '@UXEditor/components/ComponentEdit.html.twig')]
 final class ComponentEdit extends AbstractController
 {
     use DefaultActionTrait, ComponentWithFormTrait, ComponentToolsTrait, LiveCollectionTrait;
