@@ -52,11 +52,11 @@
     visibility: visible;
 }
 
-.c-btn {
+/* .c-btn {
     &.active {
         @apply text-gray-800 bg-white;
     }
-}
+} */
 
 /* #ElementsEdits {
     & .c-component-edit {
@@ -72,6 +72,6 @@
     }
 } */
 
-.c-editor {
+.ux-editor--modal {
     user-select: none;
 }
