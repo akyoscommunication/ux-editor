@@ -32,7 +32,7 @@ class EditorService
 
     public function getTwigName($class): string
     {
-        return str_replace(['Akyos\UXEditor\\Twig\\Components\\', '\\'], ['', ':'], $class);
+        return str_replace(['App\\Twig\\Components\\', '\\'], ['', ':'], $class);
     }
 
     public function getComponents(?array $allowedComponents = []): array

@@ -170,21 +170,43 @@ final class Editor extends AbstractController
                 $datas = $file['data'];
 
                 foreach ($datas as $k => $data) {
-                    /** @var UploadedFile $value */
                     $value = $data['value'];
+                    $keyOfFile = null;
+                    if (is_array($value)) {
+                        list($value, $keyOfFile) = $this->getUploadedFile($value, $keyOfFile);
+                    }
 
                     // TODO: configure the path
                     $path = $this->getParameter('kernel.project_dir') . '/public/uploads';
                     $movedFile = $value->move($path, $value->getClientOriginalName());
                     $fullPath = $movedFile->getPathname();
-                    if (isset($current->getData()[$k])) {
-                        $current->getData()[$k]->setValue($fullPath);
-                    } else {
+
+                    if (!isset($current->getData()[$k])) {
                         $newData = (new Data())
                             ->setName($k)
-                            ->setValue($fullPath)
+                            ->setValue($keyOfFile ? [] : $fullPath)
                         ;
                         $current->addData($newData);
+                    }
+
+                    if (!$keyOfFile) {
+                        $current->getData()[$k]->setValue($fullPath);
+                    } else {
+                        $keyOfFile = explode('.', $keyOfFile);
+                        $dataToSet = $current->getData()[$k];
+                        $dataToMerge = $dataToSet->getValue();
+                        $dataPointer = &$dataToMerge;
+                        foreach ($keyOfFile as $kof) {
+                            if (isset($dataPointer[$kof])) {
+                                $dataPointer = &$dataPointer[$kof];
+                            } else {
+                                $dataPointer[$kof] = [];
+                                $dataPointer = &$dataPointer[$kof];
+                            }
+                        }
+                        $dataPointer = $fullPath;
+
+                        $dataToSet->setValue($dataToMerge);
                     }
                 }
             }
@@ -199,5 +221,20 @@ final class Editor extends AbstractController
             'content' => $this->contentHydrationExtension->dehydrate($this->value),
             'id' => $this->inputId,
         ]);
+    }
+
+    private function getUploadedFile($data, $key): array
+    {
+        if (is_array($data)) {
+            // get next level
+            $nextKey = key($data);
+            $key = $key ? "$key.$nextKey" : $nextKey;
+            list($data) = $this->getUploadedFile($data[$nextKey], $key);
+        }
+
+        return [
+            $data,
+            $key,
+        ];
     }
 }

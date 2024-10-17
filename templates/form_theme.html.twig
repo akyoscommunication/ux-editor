@@ -165,6 +165,7 @@
 
 {%- block editor_data_value_row -%}
     {%- set widget_attr = {attr: {'data-model' : full_name}} -%}
+    {%- set widget_attr = {} -%}
     {%- if help is not empty -%}
         {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
     {%- endif -%}
@@ -175,3 +176,17 @@
         {{- form_help(form) -}}
     </div>
 {%- endblock editor_data_value_row -%}
+
+{%- block editor_data_value_widget -%}
+    {% if type is defined and type is same as('file') %}
+        {% if data %}
+            <img src="/uploads/{{ data.filename }}"/>
+            <button type="button">x</button>
+            <input type="hidden" {{ block('widget_attributes') }} value="{{ data.pathname }}" data-model="{{ full_name }}"/>
+        {% else %}
+            <input type="file" {{ block('widget_attributes') }} />
+        {% endif %}
+    {% else %}
+        {{ block('form_widget') }}
+    {% endif %}
+{%- endblock editor_data_value_widget -%}
