@@ -1,6 +1,7 @@
 {
     "name": "@akyoscommunication/ux-editor",
     "description": "UX editor using Live component",
+    "main": "dist/main.js",
     "version": "1.0.0",
     "license": "MIT",
     "config": {

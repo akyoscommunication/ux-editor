@@ -3,7 +3,7 @@ import {Plugins, Sortable, Draggable, Droppable} from '@shopify/draggable';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-    static targets = ['editor', 'input', 'modal', 'sortableItem', 'draggableContainer', 'droppableContainer', 'sortableContainer'];
+    static targets = ['editor', 'input', 'modal', 'draggableContainer', 'droppableContainer', 'sortableContainer'];
     
     async initialize() {
         // while the editor is not loaded we can't do anything
