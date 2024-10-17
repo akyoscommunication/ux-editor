@@ -1,9 +1,12 @@
 {
-    "name": "@akyos/ux-editor",
+    "name": "@akyoscommunication/ux-editor",
     "description": "UX editor using Live component",
     "main": "src/main.js",
     "version": "1.0.0",
     "license": "MIT",
+    "config": {
+        "css_source": "src/app.css"
+    },
     "symfony": {
         "controllers": {
             "editor": {
@@ -13,7 +16,7 @@
                 "fetch": "eager",
                 "enabled": true,
                 "autoimport": {
-                    "css": "dist/app.css"
+                    "css": "@akyoscommunication/ux-editor/dist/app.css"
                 }
             },
             "editor-edit": {
