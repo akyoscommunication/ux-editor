@@ -25,9 +25,4 @@ class EditorFileType extends AbstractType
     {
         return 'ux_editor_file';
     }
-
-    public function getParent()
-    {
-        return FileType::class;
-    }
 }

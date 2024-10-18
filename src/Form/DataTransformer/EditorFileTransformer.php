@@ -17,8 +17,11 @@ class EditorFileTransformer implements DataTransformerInterface
             return null;
         }
 
-        // transform to File object, $value is path to file
-        return new File($value);
+        if (is_string($value)) {
+            return new File($value);
+        }
+
+        return $value;
     }
 
     /**
@@ -31,7 +34,10 @@ class EditorFileTransformer implements DataTransformerInterface
             return null;
         }
 
-        // transform to string, $value is File object
-        return $value->getPathname();
+        if ($value instanceof File) {
+            return $value->getPathname();
+        }
+
+        return $value;
     }
 }

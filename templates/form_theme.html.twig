@@ -178,10 +178,12 @@
 {%- endblock editor_data_value_row -%}
 
 {%- block editor_data_value_widget -%}
-    {% if type is defined and type is same as('file') %}
+    {% if "ux_editor_file" in block_prefixes %}
         {% if data %}
-            <img src="/uploads/{{ data.filename }}"/>
-            <button type="button">x</button>
+            <div class="relative w-fit">
+                <button type="button" class="bg-red-500 text-white rounded-full p-2 absolute right-0 top-0 -translate-y-1/2 translate-x-1/2" title="Supprimer"  {{ stimulus_action('editor-edit', 'clearInput', 'click', {name: id}) }}><twig:ux:icon name="tabler:trash" class="w-3 h-3" /></button>
+                <img src="/uploads/{{ data.filename }}" class="cover max-w-52 w-full h-52 overflow-hidden rounded-xl"/>
+            </div>
             <input type="hidden" {{ block('widget_attributes') }} value="{{ data.pathname }}" data-model="{{ full_name }}"/>
         {% else %}
             <input type="file" {{ block('widget_attributes') }} />

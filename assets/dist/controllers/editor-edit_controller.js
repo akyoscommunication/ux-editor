@@ -44,4 +44,11 @@ export default class extends Controller {
             }
         });
     }
+    
+    clearInput({ params: { name } }) {
+        document.querySelectorAll(`#${name}`).forEach((input) => {
+            input.value = '';
+            input.dispatchEvent(new CustomEvent('change', {bubbles: true}));
+        });
+    }
 }
