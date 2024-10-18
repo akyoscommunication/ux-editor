@@ -13,7 +13,7 @@
 
     <div class="c-tooltip absolute left-0 bottom-full rounded-2xl bg-gray-800 py-2 px-4 flex items-center gap-2">
         <button type="button" class="border border-red-500 text-red-500 rounded-full bg-gray-800 p-2" title="Supprimer" data-action="live#emitUp" data-live-event-param="editor:remove" data-live-keys-param="{{ keyOfComponent }}"><twig:ux:icon name="tabler:trash" class="w-3 h-3" /></button>
-        <button type="button" class="border border-blue-500 text-blue-500 rounded-full bg-gray-800 p-2" title="Synchroniser" {{ live_action('sync') }}><twig:ux:icon name="fluent-mdl2:bug-sync" class="w-3 h-3" /></button>
+        <button type="button" class="border border-blue-500 text-blue-500 rounded-full bg-gray-800 p-2" title="Synchroniser" {{ live_action('sync', {key: keyOfComponent}) }}><twig:ux:icon name="fluent-mdl2:bug-sync" class="w-3 h-3" /></button>
     </div>
 
     <div class="mt-9">

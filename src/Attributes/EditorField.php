@@ -13,6 +13,6 @@ final class EditorField
         public ?string $type = null,
         public array $typeOpts = [],
         public string $label = '',
-        public ?Category $category = null,
+        public Category|string|null $category = null,
     ) {}
 }

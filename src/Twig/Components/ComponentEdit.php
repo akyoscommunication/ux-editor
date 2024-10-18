@@ -28,8 +28,8 @@ final class ComponentEdit extends AbstractController
     #[LiveProp(writable: true, fieldName: 'c', updateFromParent: true)]
     public Component $component;
 
-    #[LiveProp(updateFromParent: true)]
-    public $keyOfComponent;
+    #[LiveProp(writable: true, updateFromParent: true)]
+    public string $keyOfComponent;
 
     #[LiveProp(writable: true)]
     public $currentFieldsFilter;
@@ -39,7 +39,7 @@ final class ComponentEdit extends AbstractController
         private DataHydrationExtension $dataHydrationExtension
     ){}
 
-    public function mount(Component $component, $keyOfComponent): void
+    public function mount(Component $component, string $keyOfComponent): void
     {
         $this->component = $component;
         $this->keyOfComponent = $keyOfComponent;
@@ -65,13 +65,14 @@ final class ComponentEdit extends AbstractController
     }
 
     #[LiveAction]
-    public function sync(Request $request): void
+    public function sync(#[LiveArg] int $key, Request $request): void
     {
+        // J'ai passé la key en paramètre car si je fais $this->keyOfComponent, et que en amont j'ai changer l'ordre avec sortable, j'ai toujours l'ancienne clé alors que sur le template, la clé est la bonne
         $this->submitForm();
         $form = $this->getForm();
 
         $this->emit('editor:update', [
-            'keys' => $this->keyOfComponent,
+            'keys' => $key,
             'data' => array_map(
                 fn($data) => $this->dataHydrationExtension->dehydrate($data),
                 $form->get('data')->getData()

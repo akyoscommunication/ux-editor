@@ -165,7 +165,6 @@
 
 {%- block editor_data_value_row -%}
     {%- set widget_attr = {attr: {'data-model' : full_name}} -%}
-    {%- set widget_attr = {} -%}
     {%- if help is not empty -%}
         {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
     {%- endif -%}

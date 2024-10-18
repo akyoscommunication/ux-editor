@@ -14,7 +14,6 @@ use Akyos\UXEditor\Model\Data;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\MappingException;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -28,10 +27,13 @@ class EditorService
         private KernelInterface $kernel,
         private DataHydrationExtension $dataHydrationExtension,
         private EntityManagerInterface $em,
+        private array $componentClassMap = [],
+        private array $categoryDefinitions = [],
     ){}
 
     public function getTwigName($class): string
     {
+        // TODO: revoir ça, essayer d'utiliser les fonctions de TwigComponentBundle
         return str_replace(['App\\Twig\\Components\\', '\\'], ['', ':'], $class);
     }
 
@@ -39,14 +41,7 @@ class EditorService
     {
         // find all components with EditorComponent attribute
         $components = [];
-        $finder = new Finder();
-        /** @TODO: make updatable */
-        $dir = $this->kernel->getProjectDir() . '/src/Twig/Components';
-        $finder->files()->in($dir)->name('*.php');
-        foreach ($finder as $file) {
-            $class = 'App/Twig/Components/' . $file->getRelativePathname();
-            $class = str_replace('/', '\\', $class);
-            $class = str_replace('.php', '', $class);
+        foreach ($this->componentClassMap as $class) {
             $reflection = new \ReflectionClass($class);
             if ($editorComponent = $reflection->getAttributes(EditorComponent::class)) {
                 $twigName = $this->getTwigName($class);
@@ -56,19 +51,25 @@ class EditorService
                     if (!in_array($twigName, $allowedComponents)) continue;
                 }
 
+                $editorComponentInstance = $editorComponent[0]->newInstance();
+                $editorComponentInstance->categories = array_map(fn($c) => $this->setCategoryFromThing($c), $editorComponentInstance->categories);
+//                dump($editorComponentInstance->categories);
+
                 $component = [
                     'class' => $class,
-                    'metadata' => $editorComponent[0]->newInstance(),
+                    'metadata' => $editorComponentInstance,
                     'twigName' => $twigName,
                 ];
 
                 // check for EditorField attributes
                 $fields = [];
                 foreach ($reflection->getProperties() as $property) {
-                    $field = $property->getAttributes(EditorField::class);
-                    if ($field) {
+                    if ($field = $property->getAttributes(EditorField::class)) {
+                        $editorFieldInstance = $field[0]->newInstance();
+                        $editorFieldInstance->category = $this->setCategoryFromThing($editorFieldInstance->category);
+
                         $fields[$property->getName()] = [
-                            'metadata' => $field[0]->newInstance(),
+                            'metadata' => $editorFieldInstance,
                             'property' => $property,
                         ];
                     }
@@ -92,6 +93,14 @@ class EditorService
         foreach ($fields as $key => $field) {
             $category = $field['metadata']->category;
             if ($category) {
+                if (is_string($category)) {
+                    if (isset($this->categoryDefinitions[$category]) && ($c = $this->categoryDefinitions[$category])) {
+                        $category = new Category($c['label'], $c['icon']);
+                    } else {
+                        $category = new Category($category);
+                    }
+                }
+
                 $c = [
                     'metadata' => $category,
                     'fields' => [],
@@ -103,6 +112,7 @@ class EditorService
                 $categories[$category->name] = $c;
             } else {
                 $c = [
+                    // TODO: définir une catégorie par défaut à utiliser
                     'metadata' => new Category('General', 'iconoir:general'),
                     'fields' => [],
                 ];
@@ -260,5 +270,22 @@ class EditorService
             'editorField' => $value['metadata'],
             'realValue' => $realValue,
         ];
+    }
+
+    public function setCategoryFromThing(mixed $thing): Category
+    {
+        if ($thing instanceof Category) {
+            return $thing;
+        }
+
+        if (is_string($thing)) {
+            return new Category($thing);
+        }
+
+        if (is_array($thing)) {
+            return new Category($thing['label'], $thing['icon']);
+        }
+
+        return new Category('General', 'iconoir:general');
     }
 }
