@@ -21,3 +21,4 @@ Using LiveComponent.
 
 // IDEAS
 - [ ] Try to retrieve cva for choice type
+- [ ] Add a way to disable / able sub components fields ( writable: ['img' => ['src']], )

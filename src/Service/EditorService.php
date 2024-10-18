@@ -4,6 +4,7 @@ namespace Akyos\UXEditor\Service;
 
 use Akyos\UXEditor\Attributes\EditorComponent;
 use Akyos\UXEditor\Attributes\EditorField;
+use Akyos\UXEditor\Form\Type\ComponentType;
 use Akyos\UXEditor\Form\Type\DataType;
 use Akyos\UXEditor\Form\Type\Editor\EditorEntityType;
 use Akyos\UXEditor\Form\Type\Editor\EditorFileType;
@@ -20,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
 class EditorService
 {
@@ -53,7 +55,6 @@ class EditorService
 
                 $editorComponentInstance = $editorComponent[0]->newInstance();
                 $editorComponentInstance->categories = array_map(fn($c) => $this->setCategoryFromThing($c), $editorComponentInstance->categories);
-//                dump($editorComponentInstance->categories);
 
                 $component = [
                     'class' => $class,
@@ -257,16 +258,28 @@ class EditorService
                     'class' => $value['property']->getType()->getName(),
                     'placeholder' => 'Choose an option',
                     'choice_value' => 'id',
-                ], $value['metadata']->typeOpts);
+                ]);
                 break;
             case FileType::class:
                 $type = EditorFileType::class;
+                break;
+            case LiveCollectionType::class:
+                $componentClass = $value['metadata']->typeOpts['component'];
+                unset($value['metadata']->typeOpts['component']);
+                $component = (new Component())->setType($this->getTwigName($componentClass));
+                $typeOpts = array_merge($typeOpts, [
+                    'entry_type' => ComponentType::class,
+                    'entry_options' => [
+                        'label' => false,
+                        'component' => $component,
+                    ],
+                ]);
                 break;
         }
 
         return [
             'type' => $type,
-            'typeOpts' => $typeOpts,
+            'typeOpts' => array_merge($typeOpts, $value['metadata']->typeOpts),
             'editorField' => $value['metadata'],
             'realValue' => $realValue,
         ];
