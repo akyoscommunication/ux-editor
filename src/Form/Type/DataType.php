@@ -30,7 +30,6 @@ class DataType extends AbstractType
     {
         /** @var Component $component */
         $component = $options['component'];
-
         $builder
             ->addEventListener(
                 FormEvents::PRE_SET_DATA,
@@ -42,9 +41,14 @@ class DataType extends AbstractType
 
                     if (isset($metadata['type'])) {
                         $form
-//                            ->add('name', HiddenType::class)
+                            ->add('name', HiddenType::class, [
+                                'required' => false,
+                                'empty_data' => $data->getName(),
+                            ])
                             ->add('value', $metadata['type'], array_merge([
                                 'block_prefix' => 'editor_data_value',
+                                'required' => false,
+                                'empty_data' => $data->getValue(),
                             ], $metadata['typeOpts']))
                         ;
                     }

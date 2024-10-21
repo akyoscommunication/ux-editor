@@ -267,16 +267,31 @@ class EditorService
                 $componentClass = $value['metadata']->typeOpts['component'];
                 unset($value['metadata']->typeOpts['component']);
                 $component = (new Component())->setType($this->getTwigName($componentClass));
+                // TODO Faire une fonction recursive
+                $test = [];
+                foreach ($data->getValue() as $j => $d) {
+                    foreach ($d as $i => $dd) {
+                        $m[$i] = $this->dataHydrationExtension->hydrate([
+                            'name' => $i,
+                            'value' => $dd,
+                        ]);
+                        $test[$j] = $m;
+                    };
+                }
                 $typeOpts = array_merge($typeOpts, [
-                    'entry_type' => ComponentType::class,
+                    'entry_type' => CollectionType::class,
                     'entry_options' => [
+                        'entry_type' => DataType::class,
+                        'entry_options' => [
+                            'component' => $component,
+                            'label' => false,
+                        ],
                         'label' => false,
-                        'component' => $component,
                     ],
+                    'data' => $test,
                 ]);
                 break;
         }
-
         return [
             'type' => $type,
             'typeOpts' => array_merge($typeOpts, $value['metadata']->typeOpts),
