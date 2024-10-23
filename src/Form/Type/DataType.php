@@ -46,6 +46,8 @@ class DataType extends AbstractType
 //                            ->add('name', HiddenType::class)
                             ->add('value', $metadata['type'], array_merge([
                                 'block_prefix' => 'editor_data_value',
+                                'empty_data' => $data->getValue(),
+
                             ], $metadata['typeOpts']))
                         ;
                     }
