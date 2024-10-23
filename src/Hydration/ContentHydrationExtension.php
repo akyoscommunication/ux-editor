@@ -8,7 +8,7 @@ use Symfony\UX\LiveComponent\Hydration\HydrationExtensionInterface;
 class ContentHydrationExtension implements HydrationExtensionInterface
 {
     public function __construct(
-        private ComponentHydrationExtension $componentHydrationExtension
+        private readonly ComponentHydrationExtension $componentHydrationExtension
     ){}
 
     public function supports(string $className): bool

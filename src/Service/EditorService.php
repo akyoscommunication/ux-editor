@@ -23,7 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
-class EditorService
+readonly class EditorService
 {
     public function __construct(
         private KernelInterface $kernel,

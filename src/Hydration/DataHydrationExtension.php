@@ -20,7 +20,7 @@ class DataHydrationExtension implements HydrationExtensionInterface
     public function dehydrate(object $object): mixed
     {
         if (is_array($object->getValue())) {
-            return array_map(fn($value) => $value instanceof Data ? $this->dehydrate($value) : $value, $object->getValue());
+            return array_map(fn($value) => $value instanceof Data || is_array($value) ? $this->dehydrate(is_array($value) ? new Data('temp', $value) : $value) : $value, $object->getValue());
         }
 
         return $object->getValue();
