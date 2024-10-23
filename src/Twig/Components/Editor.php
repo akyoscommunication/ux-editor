@@ -131,12 +131,7 @@ final class Editor extends AbstractController
     {
         $current = $this->getCurrentComponent($keys);
 
-        $dataToSet = [];
-        foreach ($data as $k => $value) {
-            $dataToSet[$k] = $this->dataHydrationExtension->hydrate(['name' => $k, 'value' => $value]);
-        }
-
-        $current->setData($dataToSet);
+        $current->setData($this->componentHydrationExtension->hydrateDataRecursive($data));
 
         $this->saveToInput();
     }

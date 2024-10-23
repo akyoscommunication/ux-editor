@@ -10,8 +10,8 @@ use Twig\Extension\RuntimeExtensionInterface;
 class UXEditorExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        private ContentHydrationExtension $contentHydrationExtension,
-        private EditorService $editorService
+        private readonly ContentHydrationExtension $contentHydrationExtension,
+        private readonly EditorService $editorService
     ){}
 
     public function toEditor(?string $data, bool $autoload = true): Content

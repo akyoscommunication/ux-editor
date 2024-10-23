@@ -23,7 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
-class EditorService
+readonly class EditorService
 {
     public function __construct(
         private KernelInterface $kernel,
@@ -163,7 +163,6 @@ class EditorService
                 $data[$key] = $d->setValue($dataToSet[$key]->getValue());
             }
         }
-
         return $data;
     }
 
@@ -266,32 +265,18 @@ class EditorService
             case LiveCollectionType::class:
                 $componentClass = $value['metadata']->typeOpts['component'];
                 unset($value['metadata']->typeOpts['component']);
-                $component = (new Component())->setType($this->getTwigName($componentClass));
-                // TODO Faire une fonction recursive
-                $test = [];
-                foreach ($data->getValue() as $j => $d) {
-                    foreach ($d as $i => $dd) {
-                        $m[$i] = $this->dataHydrationExtension->hydrate([
-                            'name' => $i,
-                            'value' => $dd,
-                        ]);
-                        $test[$j] = $m;
-                    };
-                }
+                $component = (new Component())->setType($this->getTwigName($componentClass))->setData($data->getValue());
                 $typeOpts = array_merge($typeOpts, [
-                    'entry_type' => CollectionType::class,
+                    'entry_type' => ComponentType::class,
                     'entry_options' => [
-                        'entry_type' => DataType::class,
-                        'entry_options' => [
-                            'component' => $component,
-                            'label' => false,
-                        ],
                         'label' => false,
+                        'component' => $component,
                     ],
-                    'data' => $test,
+                    'data' => $data->getValue(),
                 ]);
                 break;
         }
+
         return [
             'type' => $type,
             'typeOpts' => array_merge($typeOpts, $value['metadata']->typeOpts),
