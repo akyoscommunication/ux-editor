@@ -23,7 +23,7 @@ use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 #[AsLiveComponent('UX:Editor:ComponentEdit', template: '@UXEditor/components/ComponentEdit.html.twig')]
 final class ComponentEdit extends AbstractController
 {
-    use DefaultActionTrait, ComponentWithFormTrait, ComponentToolsTrait, LiveCollectionTrait;
+    use DefaultActionTrait, ComponentToolsTrait, LiveCollectionTrait;
 
     #[LiveProp(writable: true, fieldName: 'c', updateFromParent: true)]
     public Component $component;
@@ -73,10 +73,7 @@ final class ComponentEdit extends AbstractController
 
         $this->emit('editor:update', [
             'keys' => $key,
-            'data' => array_map(
-                fn($data) => $this->dataHydrationExtension->dehydrate($data),
-                $form->get('data')->getData()
-            )
+            'data' => $form->get('data')->getData()
         ]);
     }
 

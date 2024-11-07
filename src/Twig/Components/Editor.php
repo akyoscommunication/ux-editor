@@ -4,13 +4,10 @@ namespace Akyos\UXEditor\Twig\Components;
 
 use Akyos\UXEditor\Hydration\ComponentHydrationExtension;
 use Akyos\UXEditor\Hydration\ContentHydrationExtension;
-use Akyos\UXEditor\Hydration\DataHydrationExtension;
 use Akyos\UXEditor\Model\Component;
 use Akyos\UXEditor\Model\Content;
-use Akyos\UXEditor\Model\Data;
 use Akyos\UXEditor\Service\EditorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -30,7 +27,6 @@ final class Editor extends AbstractController
         private EditorService $editorService,
         private ContentHydrationExtension $contentHydrationExtension,
         private ComponentHydrationExtension $componentHydrationExtension,
-        private DataHydrationExtension $dataHydrationExtension
     ){}
 
     #[LiveProp(writable: true)]
@@ -131,7 +127,7 @@ final class Editor extends AbstractController
     {
         $current = $this->getCurrentComponent($keys);
 
-        $current->setData($this->componentHydrationExtension->hydrateDataRecursive($data));
+        $current->setData($data);
 
         $this->saveToInput();
     }
@@ -161,49 +157,27 @@ final class Editor extends AbstractController
         if (!empty($files)) {
             foreach ($files as $key => $file) {
                 $current = $this->getCurrentComponent($key);
-
-                $datas = $file['data'];
-
-                foreach ($datas as $k => $data) {
-                    $value = $data['value'];
-                    $keyOfFile = null;
-                    if (is_array($value)) {
-                        list($value, $keyOfFile) = $this->getUploadedFile($value, $keyOfFile);
-                    }
-
-                    // TODO: configure the path
-                    $path = $this->getParameter('kernel.project_dir') . '/public/uploads';
-                    $movedFile = $value->move($path, $value->getClientOriginalName());
-                    $fullPath = $movedFile->getPathname();
-
-                    if (!isset($current->getData()[$k])) {
-                        $newData = (new Data())
-                            ->setName($k)
-                            ->setValue($keyOfFile ? [] : $fullPath)
-                        ;
-                        $current->addData($newData);
-                    }
-
-                    if (!$keyOfFile) {
-                        $current->getData()[$k]->setValue($fullPath);
-                    } else {
-                        $keyOfFile = explode('.', $keyOfFile);
-                        $dataToSet = $current->getData()[$k];
-                        $dataToMerge = $dataToSet->getValue();
-                        $dataPointer = &$dataToMerge;
-                        foreach ($keyOfFile as $kof) {
-                            if (isset($dataPointer[$kof])) {
-                                $dataPointer = &$dataPointer[$kof];
-                            } else {
-                                $dataPointer[$kof] = [];
-                                $dataPointer = &$dataPointer[$kof];
-                            }
-                        }
-                        $dataPointer = $fullPath;
-
-                        $dataToSet->setValue($dataToMerge);
-                    }
+                $keyOfFile = null;
+                $value = $file['data'];
+                if (is_array($value)) {
+                    list($value, $keyOfFile) = $this->getUploadedFile($value, $keyOfFile);
                 }
+
+                // TODO: configure the path
+                $path = $this->getParameter('kernel.project_dir') . '/public/uploads';
+                $movedFile = $value->move($path, $value->getClientOriginalName());
+                $fullPath = $movedFile->getPathname();
+
+                $pointerKeys = explode('.', $keyOfFile);
+                $dataToSet = $current->getData();
+                $pointer = &$dataToSet;
+                foreach ($pointerKeys as $pointerKey) {
+                    $pointer = &$pointer[$pointerKey];
+                }
+
+                $pointer = $fullPath;
+
+                $current->setData($dataToSet);
             }
         }
 
@@ -223,8 +197,8 @@ final class Editor extends AbstractController
         if (is_array($data)) {
             // get next level
             $nextKey = key($data);
-            $key = $key ? "$key.$nextKey" : $nextKey;
-            list($data) = $this->getUploadedFile($data[$nextKey], $key);
+            $keyForNext = $key ? "$key.$nextKey" : $nextKey;
+            list($data, $key) = $this->getUploadedFile($data[$nextKey], $keyForNext);
         }
 
         return [

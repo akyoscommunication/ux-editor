@@ -3,11 +3,13 @@
 namespace Akyos\UXEditor\Attributes;
 
 use Akyos\UXEditor\Model\Category;
+use Symfony\Component\Form\FormTypeInterface;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class EditorComponent
 {
     public function __construct(
+        public string $formType,
         public string $icon,
         public string $label,
         /** @var Category[]|string[] $categories */
