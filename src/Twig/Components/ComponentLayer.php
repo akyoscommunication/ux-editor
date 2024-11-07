@@ -2,7 +2,6 @@
 
 namespace Akyos\UXEditor\Twig\Components;
 
-use Akyos\UXEditor\Hydration\DataHydrationExtension;
 use Akyos\UXEditor\Model\Component;
 use Akyos\UXEditor\Service\EditorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,6 +22,5 @@ final class ComponentLayer extends AbstractController
 
     public function __construct(
         private EditorService $editorService,
-        private DataHydrationExtension $dataHydrationExtension
     ){}
 }

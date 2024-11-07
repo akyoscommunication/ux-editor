@@ -4,7 +4,6 @@ namespace Akyos\UXEditor\Twig\Components;
 
 use Akyos\UXEditor\Attributes\EditorComponent;
 use Akyos\UXEditor\Form\Type\ComponentType;
-use Akyos\UXEditor\Hydration\DataHydrationExtension;
 use Akyos\UXEditor\Model\Component;
 use Akyos\UXEditor\Service\EditorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +14,6 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
@@ -36,7 +34,6 @@ final class ComponentEdit extends AbstractController
 
     public function __construct(
         private EditorService $editorService,
-        private DataHydrationExtension $dataHydrationExtension
     ){}
 
     public function mount(Component $component, string $keyOfComponent): void
