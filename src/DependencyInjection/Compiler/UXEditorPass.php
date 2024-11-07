@@ -24,7 +24,7 @@ class UXEditorPass implements CompilerPassInterface
         }
 
         $editorServiceDefinition = $container->findDefinition(EditorService::class);
-        $editorServiceDefinition->setArgument(3, $componentClassMap);
-        $editorServiceDefinition->setArgument(4, $config['categories']);
+        $editorServiceDefinition->setArgument(0, $componentClassMap);
+        $editorServiceDefinition->setArgument(1, $config['categories']);
     }
 }
