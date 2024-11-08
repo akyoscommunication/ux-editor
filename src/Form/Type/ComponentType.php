@@ -27,6 +27,7 @@ class ComponentType extends AbstractType
 
         $builder
             ->add('data', $metadata->formType, [
+                'label' => false,
                 'block_prefix' => 'component_data',
                 'data' => $component->getData(),
             ])

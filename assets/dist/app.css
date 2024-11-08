@@ -602,6 +602,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   grid-column: span 12 / span 12;
 }
 
+.ux-editor .col-span-6 {
+  grid-column: span 6 / span 6;
+}
+
 .ux-editor .col-start-1 {
   grid-column-start: 1;
 }
@@ -748,6 +752,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   flex-shrink: 0;
 }
 
+.ux-editor .-translate-x-1\/2 {
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .ux-editor .-translate-y-1\/2 {
   --tw-translate-y: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -822,6 +831,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .ux-editor .gap-5 {
   gap: 1.25rem;
+}
+
+.ux-editor .gap-6 {
+  gap: 1.5rem;
 }
 
 .ux-editor .gap-x-4 {

@@ -24,7 +24,7 @@ class UXEditorExtension extends Extension implements PrependExtensionInterface, 
         $bundles = $container->getParameter('kernel.bundles');
 
         if (isset($bundles['TwigBundle'])) {
-            $container->prependExtensionConfig('twig', ['form_themes' => ['@UXEditor/form_theme.html.twig']]);
+            $container->prependExtensionConfig('twig', ['form_themes' => ['@UXEditor/form.html.twig']]);
         }
 
         if (isset($bundles['TwigComponentBundle'])) {

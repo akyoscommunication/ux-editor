@@ -1,20 +1,10 @@
 {% use "form_div_layout.html.twig" %}
 
-{%- block editor_widget -%}
-    {% set content = value|editor(false)|filter_allowed_components(allowed_components) %}
-    {% set attr = attr|merge(attr, {value: content|editor_serialized}) %}
-    <div {{ stimulus_controller('editor') }} class="border border-dashed p-8 flex items-center justify-center">
-        <input type="hidden" {{ block('widget_attributes') }} {{ stimulus_target('editor', 'input') }}>
-
-        <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" {{ stimulus_action('editor', 'open') }}>Ouvrir l'éditeur</button>
-        <div class="ux-editor">
-            <dialog {{ stimulus_target('editor', 'modal') }} class="w-full h-full max-w-full max-h-full z-10 ux-editor--modal">
-                <twig:UX:Editor :value="content" data-editor-target="editor" :allowedComponents="allowed_components" :inputId="id"/>
-            </dialog>
-        </div>
-    </div>
-{#    <twig:UX:Editor:Render :content="value|editor"/>#}
-{%- endblock editor_widget -%}
+{%- block widget_attributes -%}
+    id="{{ id }}" name="{{ full_name }}" data-model="{{ full_name }}"
+    {%- if disabled %} disabled="disabled"{% endif -%}
+    {{ block('attributes') }}
+{%- endblock widget_attributes -%}
 
 {%- block editor_data_widget -%}
     {% set category = metadata.editorField.category.name %}
@@ -23,9 +13,11 @@
 {%- endblock editor_data_widget -%}
 
 {% block form_label -%}
-    {% if label is not same as(false) and not ('radio' in form.vars.block_prefixes) -%}
+    {% if label is not same as(false) and not ('radio' in form.vars.block_prefixes or 'collection_entry' in block_prefixes) -%}
         {%- set label_attr = label_attr|merge({class: ''}) -%}
-        {%- set label_attr = label_attr|merge({class: (label_attr.class ~ ' absolute block text-xs px-2 py-0 left-3 top-0 -translate-y-1/2 bg-gray-800 text-span z-10')|trim}) -%}
+        {% if 'collection' not in block_prefixes and not compound %}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class ~ ' absolute block text-xs px-2 py-0 left-3 top-0 -translate-y-1/2 bg-gray-800 text-span z-10')|trim}) -%}
+        {% endif %}
         {%- if compound is defined and compound -%}
             {%- set element = 'legend' -%}
         {%- else -%}
@@ -59,14 +51,18 @@
 {%- endblock form_label_content -%}
 
 {% block form_row -%}
+    {%- set widget_attr = {} -%}
     {%- if compound is defined and compound -%}
         {%- set element = 'fieldset' -%}
+        {% set widget_attr = widget_attr|merge({attr: {class: (widget_attr.attr.class|default('')~' grid grid-cols-12 gap-6 ')|trim}}) %}
+        {% set row_attr = row_attr|merge({class: row_attr.class|default('')~' col-span-12'}) %}
+    {% else %}
+        {% set row_attr = row_attr|merge({class: row_attr.class|default('')~' col-span-6'}) %}
     {%- endif -%}
-    {%- set widget_attr = {} -%}
     {%- if help is not empty -%}
         {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
     {%- endif -%}
-    <{{ element|default('label') }}{% with {attr: row_attr|merge({class: (row_attr.class|default('col-span-12') ~ ' relative block h-fit '~(errors|length > 0 ? ' border-rose-500' : '')~(disabled ? ' ' : ' print:hidden'))|trim
+    <{{ element|default('label') }}{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' relative block h-fit '~(errors|length > 0 ? ' border-rose-500' : '')~(disabled ? ' ' : ' print:hidden'))|trim
 })} %}{{ block('attributes') }}{% endwith %}>
     {{- form_label(form) -}}
     {{- form_widget(form, widget_attr) -}}
@@ -187,3 +183,20 @@
         <input type="file" {{ block('widget_attributes') }} />
     {% endif %}
 {%- endblock -%}
+
+{%- block live_collection_entry_row -%}
+    <div class="relative col-span-12">
+        {{ block('form_row') }}
+        {%- if button_delete is defined and not button_delete.rendered -%}
+            {{ form_widget(button_delete) }}
+        {%- endif -%}
+    </div>
+{%- endblock live_collection_entry_row -%}
+
+{%- block live_collection_button_delete_widget -%}
+    <button type="button" class="border border-red-500 text-red-500 rounded-full bg-gray-800 p-2 absolute -translate-x-1/2 -translate-y-1/2" title="{{ label }}" {{ block('widget_attributes') }}><twig:ux:icon name="tabler:trash" class="w-3 h-3" /></button>
+{%- endblock live_collection_button_delete_widget -%}
+
+{%- block live_collection_button_add_widget -%}
+    <button type="button" class="c-btn border border-white mt-4 rounded-full bg-gray-800 p-1 px-2 text-xs flex gap-2 items-center justify-center" title="{{ label }}" {{ block('widget_attributes') }}><twig:ux:icon name="ic:round-add" class="w-5 h-5" /> Ajouter</button>
+{%- endblock live_collection_button_add_widget -%}

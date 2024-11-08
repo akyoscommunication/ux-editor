@@ -1,3 +1,5 @@
+{% form_theme form '@UXEditor/form_theme.html.twig' %}
+
 <div{{ attributes.defaults({class: 'rounded-2xl bg-gray-800/50 py-3 px-4 relative c-component-edit'}).add(stimulus_controller('editor-edit')) }}>
     <div class="c-tooltip-trigger flex justify-between items-center gap-2">
         <h2 class="text-xl cursor-grab" sortable-handle>{{ component }}</h2>
@@ -17,6 +19,7 @@
     </div>
 
     <div class="mt-9">
+{#        {{ dump(form) }}#}
         {{ form_widget(form) }}
 
         {% if metadata.isContainer %}
