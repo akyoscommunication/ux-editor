@@ -6,13 +6,12 @@ use Akyos\UXEditor\Attributes\EditorComponent;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 
@@ -61,14 +60,16 @@ class UXEditorExtension extends Extension implements PrependExtensionInterface, 
         return is_file($bundlesMetadata['FrameworkBundle']['path'].'/Resources/config/asset_mapper.php');
     }
 
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
-        try {
-            $loader->load('services.yaml');
-        } catch (Exception $e) {
-//            dd($e);
-        }
+        $loader->load('services.yaml');
+
+        $configuration = $this->getConfiguration($configs, $container);
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, $configs);
+
+        $container->setParameter('ux_editor.categories', $config['categories'] ?? []);
 
         $container->registerAttributeForAutoconfiguration(
             EditorComponent::class,
@@ -88,6 +89,7 @@ class UXEditorExtension extends Extension implements PrependExtensionInterface, 
             // categories definition
             ->children()
                 ->arrayNode('categories')
+                    ->defaultValue([])
                     ->useAttributeAsKey('name')
                     ->arrayPrototype()
                         ->children()

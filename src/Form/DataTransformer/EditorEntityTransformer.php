@@ -3,15 +3,13 @@
 namespace Akyos\UXEditor\Form\DataTransformer;
 
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class EditorEntityTransformer implements DataTransformerInterface
 {
     public function __construct(
-        #[Autowire(service: EntityRepository::class)]
-        private $repository,
-    ){}
+        private EntityRepository $repository,
+    ) {}
 
     public function transform(mixed $value): mixed
     {

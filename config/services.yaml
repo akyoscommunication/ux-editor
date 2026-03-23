@@ -11,5 +11,6 @@ services:
             - './../src/DependencyInjection/'
             - './../src/Model/'
             - './../src/Attributes/'
+            - './../src/Form/DataTransformer/'
         tags: [ 'controller.service_arguments' ]
         public: true

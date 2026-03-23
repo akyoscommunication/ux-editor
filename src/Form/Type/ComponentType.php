@@ -3,13 +3,9 @@
 namespace Akyos\UXEditor\Form\Type;
 
 use Akyos\UXEditor\Model\Component;
-use Akyos\UXEditor\Model\Data;
 use Akyos\UXEditor\Service\EditorService;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Event\PreSetDataEvent;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ComponentType extends AbstractType
@@ -24,6 +20,9 @@ class ComponentType extends AbstractType
         $component = $options['component'];
 
         $metadata = $this->editorService->getComponentMetadata($component->getType());
+        if ($metadata === null) {
+            throw new \InvalidArgumentException(\sprintf('Type de composant éditeur inconnu : "%s".', (string) $component->getType()));
+        }
 
         $builder
             ->add('data', $metadata->formType, [
@@ -37,7 +36,9 @@ class ComponentType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'component' => Component::class,
+            'csrf_protection' => false,
         ]);
+        $resolver->setRequired('component');
+        $resolver->setAllowedTypes('component', Component::class);
     }
 }

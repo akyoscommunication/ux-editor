@@ -3,7 +3,6 @@
 namespace Akyos\UXEditor\Attributes;
 
 use Akyos\UXEditor\Model\Category;
-use Symfony\Component\Form\FormTypeInterface;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class EditorComponent

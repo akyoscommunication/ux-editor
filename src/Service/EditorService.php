@@ -6,7 +6,6 @@ use Akyos\UXEditor\Attributes\EditorComponent;
 use Akyos\UXEditor\Attributes\EditorField;
 use Akyos\UXEditor\Model\Category;
 use Akyos\UXEditor\Model\Component;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 readonly class EditorService
 {
@@ -23,16 +22,17 @@ readonly class EditorService
 
     public function getComponents(?array $allowedComponents = []): array
     {
-        // find all components with EditorComponent attribute
         $components = [];
-        foreach ($this->componentClassMap as $class) {
+        $allowedTwigNames = [];
+        if (!empty($allowedComponents)) {
+            $allowedTwigNames = array_map(fn ($c) => $this->getTwigName($c), $allowedComponents);
+        }
+        foreach (array_keys($this->componentClassMap) as $class) {
             $reflection = new \ReflectionClass($class);
             if ($editorComponent = $reflection->getAttributes(EditorComponent::class)) {
                 $twigName = $this->getTwigName($class);
-                if (!empty($allowedComponents)) {
-                    // @TODO: revoir ça parce que c'est chiant de tout le temps mapper pour avoir le twigname
-                    $allowedComponents = array_map(fn($c) => $this->getTwigName($c), $allowedComponents);
-                    if (!in_array($twigName, $allowedComponents)) continue;
+                if ($allowedTwigNames !== [] && !\in_array($twigName, $allowedTwigNames, true)) {
+                    continue;
                 }
 
                 $editorComponentInstance = $editorComponent[0]->newInstance();

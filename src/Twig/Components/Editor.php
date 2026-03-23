@@ -60,12 +60,25 @@ final class Editor extends AbstractController
             ->setType($component)
         ;
         if ($keys !== null) {
-            $keys = explode('.', $keys);
+            $segments = explode('.', $keys);
             $current = $this->value;
-            foreach ($keys as $key) {
-                $current = $current[$key];
+            foreach ($segments as $segment) {
+                $idx = (int) $segment;
+                if ($current instanceof Content) {
+                    $items = $current->getComponents();
+                    $current = $items[$idx] ?? null;
+                } else {
+                    $items = $current->getChildren() ?? [];
+                    $current = $items[$idx] ?? null;
+                }
+                if ($current === null) {
+                    return;
+                }
             }
-            $order = count($current->getChildren());
+            if (!$current instanceof Component) {
+                return;
+            }
+            $order = \count($current->getChildren() ?? []);
             $current->addChild(
                 $newComponent->setOrder($order)
             );
@@ -95,29 +108,65 @@ final class Editor extends AbstractController
     #[LiveListener('editor:remove')]
     public function remove(#[LiveArg] string $keys): void
     {
-        $explodedKeys = explode('.', $keys);
-        $current = $this->getCurrentComponent($keys);
+        $segments = explode('.', $keys);
+        $removeIndex = (int) array_pop($segments);
 
-        if (count($explodedKeys) === 1) {
-            $this->value->removeComponent($current);
-        } else {
-            unset($current);
+        if ($segments === []) {
+            $components = $this->value->getComponents();
+            if (!isset($components[$removeIndex])) {
+                return;
+            }
+            unset($components[$removeIndex]);
+            $this->value->setComponents(array_values($components));
+            $this->saveToInput();
+
+            return;
         }
 
+        $parent = $this->getNodeAtPath(implode('.', $segments));
+        if (!$parent instanceof Component) {
+            return;
+        }
+        $children = $parent->getChildren() ?? [];
+        if (!isset($children[$removeIndex])) {
+            return;
+        }
+        unset($children[$removeIndex]);
+        $parent->setChildren(array_values($children));
         $this->saveToInput();
     }
 
     #[LiveAction]
-    public function move(#[LiveArg] int $old, #[LiveArg] int $new, #[LiveArg] string $keys): void
+    public function move(#[LiveArg] int $old, #[LiveArg] int $new, #[LiveArg] string $keys = ''): void
     {
-        $current = $this->getCurrentComponent($keys);
+        $keys = trim($keys);
+        if ($keys === '') {
+            $components = $this->value->getComponents();
+        } else {
+            $parent = $this->getNodeAtPath($keys);
+            if (!$parent instanceof Component) {
+                return;
+            }
+            $components = $parent->getChildren() ?? [];
+        }
 
-        $components = $this->value->getComponents();
+        if (!isset($components[$old])) {
+            return;
+        }
+
         $component = $components[$old];
         unset($components[$old]);
+        $components = array_values($components);
         array_splice($components, $new, 0, [$component]);
 
-        $this->value->setComponents(array_values($components));
+        if ($keys === '') {
+            $this->value->setComponents($components);
+        } else {
+            $parent = $this->getNodeAtPath($keys);
+            if ($parent instanceof Component) {
+                $parent->setChildren($components);
+            }
+        }
 
         $this->saveToInput();
     }
@@ -132,21 +181,39 @@ final class Editor extends AbstractController
         $this->saveToInput();
     }
 
-    private function getCurrentComponent(string $keys): Component
+    private function getNodeAtPath(string $keys): Content|Component
     {
-        // keys is like : 0.1.1
-        // we need to find the correct component and update it
-        $keys = explode('.', $keys);
-        $current = $this->value->getComponents();
-        foreach ($keys as $key) {
-            if ($current instanceof Component) {
-                $current = $current->getChildren()[(int)$key];
+        if ($keys === '') {
+            return $this->value;
+        }
+
+        $segments = explode('.', $keys);
+        $current = $this->value;
+        foreach ($segments as $segment) {
+            $idx = (int) $segment;
+            if ($current instanceof Content) {
+                $items = $current->getComponents();
+                $current = $items[$idx] ?? null;
             } else {
-                $current = $current[$key];
+                $items = $current->getChildren() ?? [];
+                $current = $items[$idx] ?? null;
+            }
+            if ($current === null) {
+                throw new \InvalidArgumentException(\sprintf('Chemin de composant invalide : "%s".', $keys));
             }
         }
 
         return $current;
+    }
+
+    private function getCurrentComponent(string $keys): Component
+    {
+        $node = $this->getNodeAtPath($keys);
+        if (!$node instanceof Component) {
+            throw new \InvalidArgumentException(\sprintf('Le chemin "%s" ne désigne pas un composant.', $keys));
+        }
+
+        return $node;
     }
 
     #[LiveAction]

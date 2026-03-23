@@ -1,50 +1,122 @@
-<div{{ attributes.defaults({class: 'bg-gray-800 p-0 flex flex-col h-screen text-white'}) }}>
-    <div class="flex items-center justify-end gap-2.5 p-2">
-        <button type="button" {{ stimulus_action('editor', 'close') }}><twig:ux:icon name="bitcoin-icons:cross-filled" class="w-10 h-10"/></button>
+<div{{ attributes.defaults({class: 'ux-editor-shell flex flex-col h-[100dvh] max-h-[100dvh] min-h-0 bg-slate-950 text-slate-100'}) }}>
+    <header class="flex shrink-0 items-center justify-between gap-4 border-b border-slate-800/90 bg-slate-900/90 px-4 py-3 backdrop-blur-sm">
+        <div class="min-w-0">
+            <h1 class="truncate text-base font-semibold tracking-tight text-white">Éditeur de contenu</h1>
+            <p class="truncate text-xs text-slate-400">Glissez des blocs depuis la bibliothèque ou réorganisez-les dans la zone centrale.</p>
+        </div>
+        <button type="button" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80" {{ stimulus_action('editor', 'close') }} aria-label="Fermer l’éditeur">
+            <twig:ux:icon name="bitcoin-icons:cross-filled" class="h-5 w-5"/>
+        </button>
+    </header>
+
+    <div class="flex shrink-0 flex-wrap items-center justify-center gap-4 border-b border-slate-800/80 bg-slate-900/50 px-4 py-2.5" role="toolbar" aria-label="Prévisualisation et mode d’affichage">
+        <div class="inline-flex rounded-xl border border-slate-800 bg-slate-900/80 p-1 shadow-inner" role="group" aria-label="Largeur de prévisualisation">
+            <button type="button" class="ux-editor-viewport-btn rounded-lg px-3 py-2 text-slate-300 transition hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70" data-viewport="desktop" aria-pressed="true" title="Bureau" {{ stimulus_action('editor', 'setViewport', 'click', { viewport: 'desktop' }) }}>
+                <span class="sr-only">Bureau</span>
+                <twig:ux:icon name="quill:desktop" class="h-5 w-5" aria-hidden="true"/>
+            </button>
+            <button type="button" class="ux-editor-viewport-btn rounded-lg px-3 py-2 text-slate-400 transition hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70" data-viewport="laptop" aria-pressed="false" title="Portable" {{ stimulus_action('editor', 'setViewport', 'click', { viewport: 'laptop' }) }}>
+                <span class="sr-only">Portable</span>
+                <twig:ux:icon name="bi:laptop" class="h-5 w-5" aria-hidden="true"/>
+            </button>
+            <button type="button" class="ux-editor-viewport-btn rounded-lg px-3 py-2 text-slate-400 transition hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70" data-viewport="ipad" aria-pressed="false" title="iPad" {{ stimulus_action('editor', 'setViewport', 'click', { viewport: 'ipad' }) }}>
+                <span class="sr-only">iPad</span>
+                <twig:ux:icon name="bi:tablet" class="h-5 w-5" aria-hidden="true"/>
+            </button>
+            <button type="button" class="ux-editor-viewport-btn rounded-lg px-3 py-2 text-slate-400 transition hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70" data-viewport="iphone" aria-pressed="false" title="iPhone" {{ stimulus_action('editor', 'setViewport', 'click', { viewport: 'iphone' }) }}>
+                <span class="sr-only">iPhone</span>
+                <twig:ux:icon name="bi:phone" class="h-5 w-5" aria-hidden="true"/>
+            </button>
+        </div>
+        <div class="inline-flex rounded-xl border border-slate-800 bg-slate-900/80 p-1 shadow-inner" role="group" aria-label="Mode édition ou rendu">
+            <button type="button" class="ux-editor-viewport-btn rounded-lg px-3 py-2 text-slate-300 transition hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70" data-edit-mode="edit" aria-pressed="true" title="Édition des blocs" {{ stimulus_action('editor', 'setEditMode', 'click', { mode: 'edit' }) }}>
+                <span class="sr-only">Édition</span>
+                <twig:ux:icon name="mdi:pencil-outline" class="h-5 w-5" aria-hidden="true"/>
+            </button>
+            <button type="button" class="ux-editor-viewport-btn rounded-lg px-3 py-2 text-slate-400 transition hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70" data-edit-mode="render" aria-pressed="false" title="Aperçu rendu" {{ stimulus_action('editor', 'setEditMode', 'click', { mode: 'render' }) }}>
+                <span class="sr-only">Aperçu rendu</span>
+                <twig:ux:icon name="mdi:eye-outline" class="h-5 w-5" aria-hidden="true"/>
+            </button>
+        </div>
     </div>
-    <div class="border-y border-gray-700/50 flex items-center justify-center gap-2.5 p-2">
-        <button type="button" class="rounded bg-gray-800 p-1"><twig:ux:icon name="quill:desktop" /></button>
-        <button type="button" class="rounded bg-gray-800 p-1"><twig:ux:icon name="bi:laptop" /></button>
-        <button type="button" class="rounded bg-gray-800 p-1"><twig:ux:icon name="bi:tablet" /></button>
-        <button type="button" class="rounded bg-gray-800 p-1"><twig:ux:icon name="bi:phone" /></button>
-    </div>
-    <div class="flex-1 flex flex-nowrap">
-        <aside class="max-w-80 bg-gray-800 p-3 h-full">
-            <section id="Elements" {{ stimulus_target('editor', 'draggableContainer sortableContainer') }}>
-                {% for category, component in components %}
-                    <details open>
-                        <summary class="mb-4">{{ category }}</summary>
-                        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                            {% for c in component %}
-                                <li>
-                                    <div class="rounded-2xl bg-gray-700/50 py-5 px-3 flex flex-col items-center justify-center gap-2 overflow-hidden text-ellipsis text-xs text-center h-full cursor-grab" data-component="{{ c.twigName }}" draggable sortable sortable-handle>
-                                        <twig:ux:icon :name="c.metadata.icon" class="w-6 h-6" />
-                                        {{ c.metadata.label }}
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </details>
-                {% endfor %}
-            </section>
-            <section id="Layers" class="mt-20">
-                <h2>Layers</h2>
-                <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} id="LayersElements">
-                    {% for key, component in value.components %}
-                        <twig:UX:Editor:ComponentLayer :keyOfComponent="key" key="{{ component.id }}" :component="component" sortable class="cursor-move"/>
+
+    <div class="flex min-h-0 flex-1 flex-nowrap">
+        <aside class="flex w-[min(20rem,92vw)] shrink-0 flex-col border-r border-slate-800/90 bg-slate-900/70 min-h-0">
+            <div class="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-3 py-4 ux-editor-scroll">
+                <section id="Elements" aria-labelledby="ux-editor-library-heading" {{ stimulus_target('editor', 'draggableContainer sortableContainer') }} class="space-y-5">
+                    <h2 id="ux-editor-library-heading" class="text-xs font-semibold uppercase tracking-wider text-slate-500">Bibliothèque</h2>
+                    {% for category, component in components %}
+                        <details open class="group rounded-xl border border-slate-800/80 bg-slate-950/40">
+                            <summary class="cursor-pointer list-none px-3 py-2.5 text-sm font-medium text-slate-200 marker:content-none [&::-webkit-details-marker]:hidden flex items-center justify-between gap-2">
+                                <span>{{ category }}</span>
+                                <twig:ux:icon name="mdi:chevron-down" class="h-4 w-4 shrink-0 text-slate-500 transition group-open:rotate-180" aria-hidden="true"/>
+                            </summary>
+                            <ul class="grid grid-cols-1 gap-2 px-2 pb-3">
+                                {% for c in component %}
+                                    <li>
+                                        <div class="rounded-xl border border-slate-700/60 bg-slate-800/40 px-3 py-3.5 flex flex-col items-center justify-center gap-2 text-center text-xs font-medium text-slate-200 shadow-sm transition hover:border-sky-500/50 hover:bg-slate-800/70 cursor-grab active:cursor-grabbing" data-component="{{ c.twigName }}" draggable sortable sortable-handle>
+                                            <twig:ux:icon :name="c.metadata.icon" class="h-7 w-7 text-sky-400/90" />
+                                            <span class="line-clamp-2 w-full">{{ c.metadata.label }}</span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
                     {% endfor %}
+                </section>
+            </div>
+            <section id="Layers" aria-labelledby="ux-editor-layers-heading" class="shrink-0 border-t border-slate-800 bg-slate-950/50">
+                <div class="max-h-[40vh] overflow-y-auto overscroll-contain px-3 py-3 ux-editor-scroll">
+                    <h2 id="ux-editor-layers-heading" class="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Calques</h2>
+                    <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} id="LayersElements" class="space-y-1">
+                        {% for key, component in value.components %}
+                            <twig:UX:Editor:ComponentLayer :keyOfComponent="key" key="{{ component.id }}" :component="component" sortable class="cursor-move"/>
+                        {% endfor %}
+                        {% if value.components is empty %}
+                            <p class="rounded-lg border border-dashed border-slate-700/80 px-3 py-4 text-center text-xs text-slate-500">Aucun bloc pour l’instant. Déposez un élément depuis la bibliothèque.</p>
+                        {% endif %}
+                    </div>
                 </div>
             </section>
         </aside>
-        <div id="ElementsEdits" class="flex-1 bg-gray-900 px-4 py-11 flex flex-col gap-2" {{ stimulus_target('editor', 'droppableContainer sortableContainer') }}>
+
+        <div class="relative flex min-h-0 min-w-0 flex-1 flex-col items-stretch bg-gradient-to-b from-slate-950 to-slate-900">
+            <div id="ElementsEdits" class="ux-editor-preview-pane ux-editor-preview--desktop mx-auto flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5 py-8 transition-[max-width,box-shadow] duration-300 ease-out ux-editor-scroll" {{ stimulus_target('editor', 'previewViewport') }}>
+            <div class="flex min-h-0 min-w-0 flex-1 flex-col gap-4" {{ stimulus_target('editor', 'editPane droppableContainer sortableContainer') }}>
+            {% if value.components is empty %}
+                <div class="mx-auto flex max-w-md flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700/90 bg-slate-900/40 px-8 py-16 text-center">
+                    <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800/80 text-sky-400">
+                        <twig:ux:icon name="material-symbols:view-object-track" class="h-8 w-8" />
+                    </div>
+                    <p class="text-base font-medium text-slate-100">Commencez votre mise en page</p>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-400">Choisissez un bloc dans la colonne de gauche et déposez-le ici pour le configurer.</p>
+                </div>
+            {% endif %}
             {% for key, component in value.components %}
                 <twig:UX:Editor:ComponentEdit :component="component" data-editor-target="edits" sortable :keyOfComponent="key" key="{{ component.id }}"/>
             {% endfor %}
+            </div>
+            <div class="hidden flex min-h-0 min-w-0 flex-1 flex-col" {{ stimulus_target('editor', 'renderPane') }}>
+                {% if value.components is empty %}
+                    <div class="mx-auto flex max-w-md flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700/90 bg-slate-900/40 px-8 py-16 text-center">
+                        <twig:ux:icon name="mdi:eye-off-outline" class="mx-auto mb-4 h-12 w-12 text-slate-600" aria-hidden="true"/>
+                        <p class="text-sm font-medium text-slate-400">Aucun bloc à afficher en aperçu.</p>
+                    </div>
+                {% else %}
+                    <div class="min-h-full w-full rounded-2xl bg-white p-6 text-slate-900 shadow-lg ring-1 ring-slate-800/60">
+                        <twig:UX:Editor:Render :content="value"/>
+                    </div>
+                {% endif %}
+            </div>
+            </div>
         </div>
     </div>
-    <div class="flex items-center justify-end gap-2.5 p-2">
-        <button type="button" class="border border-indigo-800 text-indigo-800 p-3.5"><twig:ux:icon name="carbon:return" /></button>
-        <button type="button" class="border border-indigo-800 bg-indigo-800 text-white p-3.5 w-full max-w-44" {{ stimulus_action('editor', 'save') }}>Valider</button>
-{#        <button type="button" class="border border-indigo-800 bg-indigo-800 text-white p-3.5 w-full max-w-44" data-action="live#emit" data-live-event-param="editor:sync">Valider</button>#}
-    </div>
+
+    <footer class="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-slate-800/90 bg-slate-900/90 px-4 py-3 backdrop-blur-sm">
+        <p class="text-xs text-slate-500">Les modifications sont enregistrées automatiquement dans le formulaire.</p>
+        <button type="button" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-transparent px-5 text-sm font-medium text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80" {{ stimulus_action('editor', 'close') }}>
+            <twig:ux:icon name="carbon:return" class="h-4 w-4" />
+            Fermer
+        </button>
+    </footer>
 </div>

@@ -14,12 +14,20 @@ class ComponentHydrationExtension implements HydrationExtensionInterface
 
     public function hydrate(mixed $data, string $className = Component::class, bool $autoload = false): object
     {
-        return (new $className)
-            ->setId($data['id'])
-            ->setType($data['type'])
-            ->setChildren($data['children'])
-            ->setOrder($data['order'])
-            ->setData($data['data'])
+        $children = [];
+        foreach ($data['children'] ?? [] as $child) {
+            if (!\is_array($child)) {
+                continue;
+            }
+            $children[] = $this->hydrate($child, Component::class, $autoload);
+        }
+
+        return (new $className())
+            ->setId($data['id'] ?? '')
+            ->setType($data['type'] ?? null)
+            ->setChildren($children)
+            ->setOrder($data['order'] ?? null)
+            ->setData($data['data'] ?? [])
         ;
     }
 
@@ -32,7 +40,10 @@ class ComponentHydrationExtension implements HydrationExtensionInterface
             'id' => $object->getId(),
             'type' => $object->getType(),
             'data' => $object->getData(),
-            'children' => $object->getChildren(),
+            'children' => array_map(
+                fn(Component $child) => $this->dehydrate($child),
+                $object->getChildren() ?? []
+            ),
             'order' => $object->getOrder(),
         ];
     }

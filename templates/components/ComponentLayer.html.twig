@@ -1,17 +1,23 @@
-<div {{ attributes.defaults({class: "block"}) }}>
+<div {{ attributes.defaults({class: "block", 'data-key-of-component': keyOfComponent}) }}>
     {% if component.children|length %}
-        <details>
-            <summary class="mb-4"><label class="flex items-center gap-2"><input type="checkbox"> <p sortable-handle>{{ component }}</p></label></summary>
-            <ul>
-                {% for key, component in component.children %}
+        <details class="group rounded-lg border border-slate-800/80 bg-slate-900/40">
+            <summary class="flex cursor-pointer list-none items-center gap-2 px-2 py-2 text-sm text-slate-200 marker:content-none [&::-webkit-details-marker]:hidden">
+                <twig:ux:icon name="mdi:chevron-right" class="h-4 w-4 shrink-0 text-slate-500 transition group-open:rotate-90" aria-hidden="true"/>
+                <span class="min-w-0 flex-1 truncate font-medium" sortable-handle>{{ component }}</span>
+            </summary>
+            <ul class="space-y-1 border-t border-slate-800/60 py-2 pl-4 pr-1">
+                {% for key, child in component.children %}
                     <li>
-                        <twig:UX:Editor:ComponentLayer :component="component"/>
+                        <twig:UX:Editor:ComponentLayer :component="child" :keyOfComponent="keyOfComponent ~ '.' ~ key"/>
                     </li>
                 {% endfor %}
             </ul>
         </details>
     {% else %}
-        <label class="flex items-center gap-2"><input type="checkbox"> <p sortable-handle>{{ component }}</p></label>
+        <div class="flex items-center gap-2 rounded-lg border border-transparent px-2 py-2 text-sm text-slate-200 transition hover:border-slate-800 hover:bg-slate-800/40">
+            <twig:ux:icon name="mdi:shape-outline" class="h-4 w-4 shrink-0 text-slate-500" aria-hidden="true"/>
+            <span class="min-w-0 flex-1 truncate" sortable-handle>{{ component }}</span>
+        </div>
     {% endif %}
 </div>
 

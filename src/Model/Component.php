@@ -11,9 +11,6 @@ class Component implements \Stringable
      */
     public ?string $type = null;
 
-    /**
-     * @var Data[] $data
-     */
     public array $data = [];
 
     /**
@@ -65,13 +62,6 @@ class Component implements \Stringable
         return $this;
     }
 
-    public function addData(Data $data)
-    {
-        $this->data[$data->getName()] = $data;
-
-        return $this;
-    }
-
     public function getChildren(): ?array
     {
         return $this->children;
@@ -84,7 +74,7 @@ class Component implements \Stringable
         return $this;
     }
 
-    public function addChild(Component $component): string
+    public function addChild(Component $component): static
     {
         $findedChild = array_filter($this->children, fn($child) => $child->getId() === $component->getId());
         if (empty($findedChild)) {

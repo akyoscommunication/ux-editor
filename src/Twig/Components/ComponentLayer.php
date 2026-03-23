@@ -3,7 +3,6 @@
 namespace Akyos\UXEditor\Twig\Components;
 
 use Akyos\UXEditor\Model\Component;
-use Akyos\UXEditor\Service\EditorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -19,8 +18,4 @@ final class ComponentLayer extends AbstractController
 
     #[LiveProp(updateFromParent: true)]
     public $keyOfComponent;
-
-    public function __construct(
-        private EditorService $editorService,
-    ){}
 }

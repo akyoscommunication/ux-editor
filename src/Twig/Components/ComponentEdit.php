@@ -50,7 +50,7 @@ final class ComponentEdit extends AbstractController
     }
 
     #[ExposeInTemplate('metadata')]
-    public function getMetadata(): EditorComponent
+    public function getMetadata(): ?EditorComponent
     {
         return $this->editorService->getComponentMetadata($this->component->getType());
     }
@@ -62,9 +62,8 @@ final class ComponentEdit extends AbstractController
     }
 
     #[LiveAction]
-    public function sync(#[LiveArg] int $key, Request $request): void
+    public function sync(#[LiveArg] string $key, Request $request): void
     {
-        // J'ai passé la key en paramètre car si je fais $this->keyOfComponent, et que en amont j'ai changer l'ordre avec sortable, j'ai toujours l'ancienne clé alors que sur le template, la clé est la bonne
         $this->submitForm();
         $form = $this->getForm();
 
