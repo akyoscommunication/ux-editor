@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 
 class UXEditorExtension extends Extension implements PrependExtensionInterface, ConfigurationInterface
 {
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         // Register the Dropzone form theme if TwigBundle is available
         $bundles = $container->getParameter('kernel.bundles');

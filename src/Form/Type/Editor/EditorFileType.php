@@ -13,7 +13,7 @@ class EditorFileType extends AbstractType
         $builder->addModelTransformer(new EditorFileTransformer());
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ux_editor_file';
     }

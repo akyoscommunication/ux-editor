@@ -20,7 +20,7 @@ class EditorEntityType extends AbstractType
         $builder->addModelTransformer(new EditorEntityTransformer($this->em->getRepository($class)));
     }
 
-    public function getParent()
+    public function getParent(): ?string
     {
         return EntityType::class;
     }
