@@ -114,9 +114,15 @@
 
     <footer class="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-slate-800/90 bg-slate-900/90 px-4 py-3 backdrop-blur-sm">
         <p class="text-xs text-slate-500">Les modifications sont enregistrées automatiquement dans le formulaire.</p>
-        <button type="button" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-transparent px-5 text-sm font-medium text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80" {{ stimulus_action('editor', 'close') }}>
-            <twig:ux:icon name="carbon:return" class="h-4 w-4" />
-            Fermer
-        </button>
+        <div class="flex flex-wrap items-center gap-3">
+            <button type="button" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-transparent px-5 text-sm font-medium text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80" {{ stimulus_action('editor', 'close') }}>
+                <twig:ux:icon name="carbon:return" class="h-4 w-4" />
+                Fermer
+            </button>
+            <button type="button" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-sky-600 px-5 text-sm font-semibold text-white shadow-md shadow-sky-900/20 transition hover:bg-sky-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400" {{ stimulus_action('editor', 'saveAndClose') }}>
+                <twig:ux:icon name="mdi:content-save-outline" class="h-4 w-4" />
+                Enregistrer et fermer
+            </button>
+        </div>
     </footer>
 </div>

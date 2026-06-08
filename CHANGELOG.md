@@ -23,6 +23,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `symfony/http-kernel` → `^6.4|^7.0|^8.0`; `symfonycasts/tailwind-bundle`
   → `^0.6|^0.13`).
 
+### Added (editor UX)
+
+- **"Enregistrer et fermer" button** in the editor footer. It flushes the
+  pending serial queue (field sync + file uploads), waits for it to settle,
+  then closes the modal — so nothing is lost on close. Auto-save into the
+  hidden input is unchanged; actual persistence still happens on the host
+  form submit. New `saveAndClose()` action in the `editor` Stimulus controller.
+
+### Changed
+
+- **Symfony 8 / UX 3 method signatures** — added the native return types now
+  declared by the framework interfaces, required to boot on Symfony 8 and safe
+  on 6.4/7.0:
+  - `UXEditorExtension::prepend(): void` (`PrependExtensionInterface`)
+  - `EditorType::buildView(): void`, `EditorEntityType::getParent(): ?string`,
+    `EditorFileType::getBlockPrefix(): string` (`AbstractType`).
+- **`ComponentEdit` form re-render** — override
+  `ComponentWithFormTrait::getDataModelValue()` to return `'norender|*'`
+  instead of the default `'on(change)|*'`. The `editor-edit` Stimulus
+  controller already owns the (debounced) sync flow; the default behaviour
+  re-rendered the component on every keystroke and reset the interactive
+  builder widgets. This follows the Symfony UX Live Component documentation and
+  the Akyos convention for Live forms wrapping JS widgets.
+
 ### Notes
 
 - **No PHP / Twig / JS code change was required.** Every UX API used by the

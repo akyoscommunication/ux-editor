@@ -49,6 +49,18 @@ final class ComponentEdit extends AbstractController
         return $this->createForm(ComponentType::class, null, ['component' => $this->component]);
     }
 
+    /**
+     * Map every field as a model (name => model) but suppress the automatic
+     * re-render on each change. The "editor-edit" Stimulus controller owns the
+     * sync flow (debounced LiveAction "sync"), so letting the default
+     * "on(change)|*" trigger a server re-render would reset the interactive
+     * builder widgets on every keystroke. See Symfony UX Live Component docs.
+     */
+    private function getDataModelValue(): ?string
+    {
+        return 'norender|*';
+    }
+
     #[ExposeInTemplate('metadata')]
     public function getMetadata(): ?EditorComponent
     {

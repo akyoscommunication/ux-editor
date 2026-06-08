@@ -152,10 +152,21 @@ export default class extends Controller {
         document.body.style.overflow = 'hidden';
         this.modalTarget.showModal();
     }
-    
+
     close() {
         document.body.style.overflow = '';
         this.modalTarget.close();
+    }
+
+    async saveAndClose() {
+        // Flush any pending sync/save already queued, then run a final save,
+        // and wait for the whole serial queue to settle before closing so no
+        // change is lost. The hidden input is kept up to date by `editor:save`.
+        this.save();
+        try {
+            await this._liveQueue;
+        } catch (_) {}
+        this.close();
     }
 
     setViewport(event) {
