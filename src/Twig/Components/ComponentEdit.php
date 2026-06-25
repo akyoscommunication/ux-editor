@@ -29,6 +29,9 @@ final class ComponentEdit extends AbstractController
     #[LiveProp(writable: true, updateFromParent: true)]
     public string $keyOfComponent;
 
+    #[LiveProp(updateFromParent: true)]
+    public string $editorId = '';
+
     #[LiveProp(writable: true)]
     public $currentFieldsFilter;
 
@@ -36,10 +39,11 @@ final class ComponentEdit extends AbstractController
         private EditorService $editorService,
     ){}
 
-    public function mount(Component $component, string $keyOfComponent): void
+    public function mount(Component $component, string $keyOfComponent, string $editorId = ''): void
     {
         $this->component = $component;
         $this->keyOfComponent = $keyOfComponent;
+        $this->editorId = $editorId;
 
         $this->currentFieldsFilter = array_key_first($this->orderedFields());
     }
@@ -58,7 +62,7 @@ final class ComponentEdit extends AbstractController
      */
     private function getDataModelValue(): ?string
     {
-        return 'norender|*';
+        return 'norender|on(input)|*';
     }
 
     #[ExposeInTemplate('metadata')]
@@ -79,9 +83,15 @@ final class ComponentEdit extends AbstractController
         $this->submitForm();
         $form = $this->getForm();
 
+        // ponytail: emit() global (et non emitUp) car emitUp resout le parent via
+        // le DOM (element.contains) et devient instable pendant les re-render morphdom,
+        // ce qui faisait perdre des sync. emit() est fiable; on cible le bon editeur
+        // cote serveur via editorId. Plafond : chaque sync re-render tous les UX:Editor
+        // de la page (un par dialog). Upgrade : event d'ecoute unique par instance.
         $this->emit('editor:update', [
             'keys' => $key,
-            'data' => $form->get('data')->getData()
+            'data' => $form->get('data')->getData(),
+            'editorId' => $this->editorId,
         ]);
     }
 

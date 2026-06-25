@@ -41,6 +41,14 @@ export default class extends Controller {
         };
         this.editor.on('render:finished', this._onRenderFinished);
 
+        this._onEditorRequestStarted = () => {
+            const p = this.editor.backendRequest?.promise;
+            if (p) {
+                this._liveQueue = this._liveQueue.then(() => p).catch(() => {});
+            }
+        };
+        this.editor.on('request:started', this._onEditorRequestStarted);
+
         this._recreateSortable();
         this._restoreViewport();
         this._restoreEditMode();
@@ -50,10 +58,28 @@ export default class extends Controller {
         if (this.editor && this._onRenderFinished) {
             this.editor.off('render:finished', this._onRenderFinished);
         }
+        if (this.editor && this._onEditorRequestStarted) {
+            this.editor.off('request:started', this._onEditorRequestStarted);
+        }
         if (this._onEditorSave) {
             window.removeEventListener('editor:save', this._onEditorSave);
         }
         this._destroySortable();
+    }
+
+    async flushPendingEdits() {
+        const syncs = [];
+        this.element.querySelectorAll('.c-component-edit').forEach((edit) => {
+            const editController = this.application?.getControllerForElementAndIdentifier(edit, 'editor-edit');
+            if (editController?.flushSync) {
+                syncs.push(editController.flushSync());
+            }
+        });
+        // ponytail: les sync live peuvent ne jamais se résoudre (modal jamais ouverte) — plafond 500 ms
+        await Promise.race([
+            Promise.all(syncs),
+            new Promise((resolve) => setTimeout(resolve, 500)),
+        ]);
     }
 
     runSerial(fn) {
@@ -159,9 +185,7 @@ export default class extends Controller {
     }
 
     async saveAndClose() {
-        // Flush any pending sync/save already queued, then run a final save,
-        // and wait for the whole serial queue to settle before closing so no
-        // change is lost. The hidden input is kept up to date by `editor:save`.
+        await this.flushPendingEdits();
         this.save();
         try {
             await this._liveQueue;
@@ -318,14 +342,20 @@ export default class extends Controller {
         document.querySelectorAll('.droppable-container--active').forEach((container) => {
             container.classList.remove('droppable-container--active');
         });
-        
+
         this.eligibleDroppableContainers.forEach((shadowContainer) => {
             const id = shadowContainer.id;
+            if (!id) {
+                return;
+            }
             const container = document.getElementById(id);
-            
+            if (!container?.classList) {
+                return;
+            }
+
             if (container.classList.contains('c-component-edit__children')) {
-                const parentComponent = container.closest(".c-component-edit");
-                parentComponent.classList.add('droppable-container--active');
+                const parentComponent = container.closest('.c-component-edit');
+                parentComponent?.classList?.add('droppable-container--active');
             }
         });
     }

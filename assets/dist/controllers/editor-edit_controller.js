@@ -14,14 +14,23 @@ export default class extends Controller {
         this._syncTimeout = null;
         this._onFormInput = (e) => this.#onFormInput(e);
         this._onFormChange = (e) => this.#onFormChange(e);
+        this._onFormBlur = (e) => this.#onFormBlur(e);
         this.element.addEventListener('input', this._onFormInput);
         this.element.addEventListener('change', this._onFormChange);
+        this.element.addEventListener('focusout', this._onFormBlur);
     }
 
     disconnect() {
         this.element.removeEventListener('input', this._onFormInput);
         this.element.removeEventListener('change', this._onFormChange);
+        this.element.removeEventListener('focusout', this._onFormBlur);
         clearTimeout(this._syncTimeout);
+    }
+
+    flushSync() {
+        clearTimeout(this._syncTimeout);
+        this._syncTimeout = null;
+        return this.#syncNow();
     }
 
     #onFormInput(e) {
@@ -44,6 +53,18 @@ export default class extends Controller {
         this.#scheduleSync();
     }
 
+    #onFormBlur(e) {
+        const t = e.target;
+        if (!t.matches('input:not([type=file]), textarea, select')) {
+            return;
+        }
+        if (!this.element.contains(t)) {
+            return;
+        }
+        clearTimeout(this._syncTimeout);
+        void this.#syncNow();
+    }
+
     #getParentEditorController() {
         const host = this.element.closest('.ux-editor [data-controller]');
         if (!host || !this.application) {
@@ -58,17 +79,23 @@ export default class extends Controller {
         }
         clearTimeout(this._syncTimeout);
         this._syncTimeout = setTimeout(() => {
-            const key = this.element.dataset.keyOfComponent;
-            if (key === undefined || key === '') {
-                return;
-            }
-            const parent = this.#getParentEditorController();
-            if (parent && typeof parent.runSerial === 'function') {
-                parent.runSerial(() => this.editorEdit.action('sync', { key }));
-            } else {
-                this.editorEdit.action('sync', { key });
-            }
+            void this.#syncNow();
         }, 500);
+    }
+
+    #syncNow() {
+        if (!this.editorEdit) {
+            return Promise.resolve();
+        }
+        const key = this.element.dataset.keyOfComponent;
+        if (key === undefined || key === '') {
+            return Promise.resolve();
+        }
+        const parent = this.#getParentEditorController();
+        if (parent && typeof parent.runSerial === 'function') {
+            return parent.runSerial(() => this.editorEdit.action('sync', { key }));
+        }
+        return this.editorEdit.action('sync', { key });
     }
 
     async #syncThenSave() {
@@ -81,17 +108,7 @@ export default class extends Controller {
             return;
         }
         try {
-            if (parent && typeof parent.runSerial === 'function') {
-                const p = parent.runSerial(() => this.editorEdit.action('sync', { key }));
-                if (p && typeof p.then === 'function') {
-                    await p;
-                }
-            } else {
-                const p = this.editorEdit.action('sync', { key });
-                if (p && typeof p.then === 'function') {
-                    await p;
-                }
-            }
+            await this.#syncNow();
         } catch (_) {
         }
         if (parent && typeof parent.save === 'function') {

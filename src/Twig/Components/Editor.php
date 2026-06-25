@@ -172,9 +172,20 @@ final class Editor extends AbstractController
     }
 
     #[LiveListener('editor:update')]
-    public function update(#[LiveArg] string $keys, #[LiveArg] array $data): void
+    public function update(#[LiveArg] string $keys, #[LiveArg] array $data, #[LiveArg] string $editorId = ''): void
     {
-        $current = $this->getCurrentComponent($keys);
+        // editor:update est diffuse a TOUS les UX:Editor de la page (emit global).
+        // On n'applique que si l'event vise cet editeur, sinon un editeur voisin
+        // tenterait de resoudre un chemin inexistant (500) ou ecraserait son contenu.
+        if ($editorId === '' || $editorId !== $this->inputId) {
+            return;
+        }
+
+        try {
+            $current = $this->getCurrentComponent($keys);
+        } catch (\InvalidArgumentException) {
+            return;
+        }
 
         $current->setData($data);
 

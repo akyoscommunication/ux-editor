@@ -93,7 +93,7 @@
                 </div>
             {% endif %}
             {% for key, component in value.components %}
-                <twig:UX:Editor:ComponentEdit :component="component" data-editor-target="edits" sortable :keyOfComponent="key" key="{{ component.id }}"/>
+                <twig:UX:Editor:ComponentEdit :component="component" data-editor-target="edits" sortable :keyOfComponent="key" :editorId="inputId" key="{{ component.id }}"/>
             {% endfor %}
             </div>
             <div class="hidden flex min-h-0 min-w-0 flex-1 flex-col" {{ stimulus_target('editor', 'renderPane') }}>

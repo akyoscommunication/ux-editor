@@ -18,6 +18,7 @@ class ContentHydrationExtension implements HydrationExtensionInterface
 
     public function hydrate(mixed $data, string $className = Content::class, bool $autoload = false): object
     {
+        dump($data);
         return (new $className())
             ->setComponents(
                 array_map(

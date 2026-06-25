@@ -1,6 +1,6 @@
 {% form_theme form '@UXEditor/form_theme.html.twig' %}
 
-<div{{ attributes.defaults({class: 'c-component-edit group relative rounded-2xl border border-slate-700/70 bg-slate-900/50 shadow-lg ring-1 ring-white/5 transition hover:border-slate-600 hover:ring-white/10', 'data-key-of-component': keyOfComponent}).add(stimulus_controller('editor-edit')) }}>
+<div{{ attributes.defaults({class: 'c-component-edit group relative rounded-2xl border border-slate-700/70 bg-slate-900/50 shadow-lg ring-1 ring-white/5 transition hover:border-slate-600 hover:ring-white/10', 'data-key-of-component': keyOfComponent, ...stimulus_controller('editor-edit')}) }}>
     <div class="flex flex-col gap-3 border-b border-slate-800/80 px-4 pb-3 pt-4 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex min-w-0 flex-1 items-start gap-3">
             <span class="mt-0.5 flex h-9 w-9 shrink-0 cursor-grab items-center justify-center rounded-lg border border-slate-700/80 bg-slate-800/60 text-slate-400 active:cursor-grabbing" sortable-handle aria-hidden="true">
@@ -36,7 +36,7 @@
         {% if metadata is not null and metadata.isContainer %}
             <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} class="c-component-edit__children mt-6 rounded-2xl border-2 border-dashed border-sky-500/40 bg-slate-950/30 p-1 transition hover:border-sky-400/60" id="{{ keyOfComponent }}_children">
                 {% for k, child in c.children %}
-                    <twig:UX:Editor:ComponentEdit :c="child" sortable :key="component.id" keyOfComponent="{{ keyOfComponent }}.{{ k }}"/>
+                    <twig:UX:Editor:ComponentEdit :c="child" sortable :key="component.id" :editorId="editorId" keyOfComponent="{{ keyOfComponent }}.{{ k }}"/>
                 {% endfor %}
 
                 <button type="button" class="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-6 text-sm font-medium text-sky-300/90 transition hover:border-sky-500/30 hover:bg-sky-950/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70" {{ stimulus_action('editor', 'setSortable') }}>
