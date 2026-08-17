@@ -70,6 +70,7 @@ class UXEditorExtension extends Extension implements PrependExtensionInterface, 
         $config = $processor->processConfiguration($configuration, $configs);
 
         $container->setParameter('ux_editor.categories', $config['categories'] ?? []);
+        $container->setParameter('ux_editor.preview_enabled', $config['preview_enabled'] ?? true);
 
         $container->registerAttributeForAutoconfiguration(
             EditorComponent::class,
@@ -97,6 +98,10 @@ class UXEditorExtension extends Extension implements PrependExtensionInterface, 
                             ->scalarNode('icon')->end()
                         ->end()
                     ->end()
+                ->end()
+                ->booleanNode('preview_enabled')
+                    ->info('Active l’aperçu rendu (mode œil) dans l’éditeur.')
+                    ->defaultTrue()
                 ->end()
         ;
 

@@ -2,21 +2,22 @@
     {% set content = value|editor(false)|filter_allowed_components(allowed_components) %}
     {% set attr = attr|merge(attr, {value: content|editor_serialized}) %}
     <div class="ux-editor">
-        <div {{ stimulus_controller('editor') }} class="rounded-2xl border border-slate-200 bg-slate-50/80 p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/40">
+        {# ponytail: tokens BO (pas dark: media) — le package Tailwind réagit au OS, la modale admin reste claire #}
+        <div {{ stimulus_controller('editor') }} class="rounded-lg border border-border bg-muted/30 p-4">
             <input type="hidden" {{ block('widget_attributes') }} {{ stimulus_target('editor', 'input') }}>
 
-            <div class="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div class="min-w-0">
-                    <p class="text-sm font-medium text-slate-800 dark:text-slate-100">Mise en page</p>
-                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Ouvrez l’éditeur visuel pour ajouter des blocs, les ordonner et remplir le contenu.</p>
+                    <p class="text-sm font-medium text-foreground">{{ 'editor.title'|trans({}, 'forms') }}</p>
+                    <p class="mt-1 text-sm text-muted-foreground">{{ 'editor.hint'|trans({}, 'forms') }}</p>
                 </div>
-                <button type="button" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-sky-900/20 transition hover:bg-sky-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:focus-visible:ring-offset-slate-900" {{ stimulus_action('editor', 'open') }}>
-                    <twig:ux:icon name="mdi:pencil-outline" class="h-5 w-5" />
-                    Ouvrir l’éditeur
-                </button>
+                <twig:Button type="button" variant="outline" class="shrink-0" data-action="click->editor#open">
+                    <twig:ux:icon name="lucide:pencil" />
+                    {{ 'editor.open'|trans({}, 'forms') }}
+                </twig:Button>
             </div>
             <dialog {{ stimulus_target('editor', 'modal') }} class="ux-editor-dialog mt-4 m-0 h-full max-h-full w-full max-w-full border-0 bg-transparent p-0 text-inherit shadow-none backdrop:bg-black/65 backdrop:backdrop-blur-[2px] [&::backdrop]:bg-black/65 z-[100] ux-editor--modal">
-                <twig:UX:Editor :value="content" data-editor-target="editor" :allowedComponents="allowed_components" :inputId="id"/>
+                <twig:UX:Editor :value="content" data-editor-target="editor" :allowedComponents="allowed_components" :inputId="id" :previewEnabled="preview_enabled"/>
             </dialog>
         </div>
     </div>

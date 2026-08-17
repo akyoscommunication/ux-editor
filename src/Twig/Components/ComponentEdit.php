@@ -8,7 +8,6 @@ use Akyos\UXEditor\Model\Component;
 use Akyos\UXEditor\Service\EditorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -37,32 +36,44 @@ final class ComponentEdit extends AbstractController
 
     public function __construct(
         private EditorService $editorService,
-    ){}
+    ) {
+    }
 
     public function mount(Component $component, string $keyOfComponent, string $editorId = ''): void
     {
         $this->component = $component;
         $this->keyOfComponent = $keyOfComponent;
         $this->editorId = $editorId;
+        // ponytail: un nom de formulaire par bloc, sinon les id HTML (ex. media) se
+        // dupliquent et ux-filemanager synchronise tous les widgets ciblés.
+        $this->formName = $this->buildFormName($keyOfComponent);
 
         $this->currentFieldsFilter = array_key_first($this->orderedFields());
     }
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(ComponentType::class, null, ['component' => $this->component]);
+        return $this->container->get('form.factory')->createNamed(
+            $this->buildFormName($this->keyOfComponent),
+            ComponentType::class,
+            null,
+            ['component' => $this->component],
+        );
+    }
+
+    private function buildFormName(string $keyOfComponent): string
+    {
+        return 'component_' . str_replace('.', '_', $keyOfComponent);
     }
 
     /**
-     * Map every field as a model (name => model) but suppress the automatic
-     * re-render on each change. The "editor-edit" Stimulus controller owns the
-     * sync flow (debounced LiveAction "sync"), so letting the default
-     * "on(change)|*" trigger a server re-render would reset the interactive
-     * builder widgets on every keystroke. See Symfony UX Live Component docs.
+     * Pas de data-model : le flux editor-edit (debounced LiveAction sync) est
+     * le seul à lire le DOM et persister les champs. Évite le double appel
+     * live (norender) + sync sur chaque frappe dans les formulaires de blocs.
      */
     private function getDataModelValue(): ?string
     {
-        return 'norender|on(input)|*';
+        return null;
     }
 
     #[ExposeInTemplate('metadata')]
@@ -78,10 +89,21 @@ final class ComponentEdit extends AbstractController
     }
 
     #[LiveAction]
-    public function sync(#[LiveArg] string $key, Request $request): void
+    public function sync(#[LiveArg] string $key, #[LiveArg] array $formValues = []): void
     {
-        $this->submitForm();
+        if ([] !== $formValues) {
+            $this->formValues = $formValues;
+        }
+
+        if (null !== $this->form || null !== $this->formView) {
+            $this->resetForm(true);
+        }
+
         $form = $this->getForm();
+        $form->submit($this->formValues, false);
+        // ponytail: sans ça, PreReRender::submitFormOnRender() re-soumet la même
+        // instance dans la même requête → "A form can only be submitted once."
+        $this->shouldAutoSubmitForm = false;
 
         // ponytail: emit() global (et non emitUp) car emitUp resout le parent via
         // le DOM (element.contains) et devient instable pendant les re-render morphdom,

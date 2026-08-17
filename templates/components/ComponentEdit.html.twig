@@ -7,7 +7,7 @@
                 <twig:ux:icon name="mdi:drag" class="h-5 w-5" />
             </span>
             <div class="min-w-0">
-                <h2 class="truncate text-lg font-semibold text-white">{{ component }}</h2>
+                <h2 class="truncate text-lg font-sans text-white">{{ component }}</h2>
                 <p class="mt-0.5 text-xs text-slate-500">Faites glisser la poignée pour réordonner ce bloc.</p>
             </div>
         </div>
@@ -34,7 +34,7 @@
         {{ form_widget(form) }}
 
         {% if metadata is not null and metadata.isContainer %}
-            <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} class="c-component-edit__children mt-6 rounded-2xl border-2 border-dashed border-sky-500/40 bg-slate-950/30 p-1 transition hover:border-sky-400/60" id="{{ keyOfComponent }}_children">
+            <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} class="c-component-edit__children mt-6 rounded-2xl border-1 border-dashed border-sky-500/40 bg-slate-950/30 p-1 transition hover:border-sky-400/60" id="{{ keyOfComponent }}_children">
                 {% for k, child in c.children %}
                     <twig:UX:Editor:ComponentEdit :c="child" sortable :key="component.id" :editorId="editorId" keyOfComponent="{{ keyOfComponent }}.{{ k }}"/>
                 {% endfor %}

@@ -2,6 +2,7 @@
 
 namespace Akyos\UXEditor\Form\Type;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
@@ -10,9 +11,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EditorType extends AbstractType
 {
+    public function __construct(
+        #[Autowire('%ux_editor.preview_enabled%')]
+        private readonly bool $previewEnabled,
+    ) {
+    }
+
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['allowed_components'] = $options['allowed_components'];
+        $view->vars['preview_enabled'] = $this->previewEnabled;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

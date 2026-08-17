@@ -1,7 +1,7 @@
 <div{{ attributes }}>
     {% for c in content.components %}
         {% if c.type and c.data %}
-            {{ component(c.type, c.data) }}
+            {{ component(c.type, c.data|merge({preview: preview})) }}
         {% endif %}
     {% endfor %}
 </div>

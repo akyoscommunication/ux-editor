@@ -1,10 +1,10 @@
 import { Controller } from '@hotwired/stimulus';
-import {Plugins, Sortable} from '@shopify/draggable';
+import { Plugins, Sortable } from '@shopify/draggable';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static targets = ['editor', 'input', 'modal', 'draggableContainer', 'droppableContainer', 'sortableContainer', 'previewViewport', 'editPane', 'renderPane'];
-    
+
     initialize() {
         this._liveQueue = Promise.resolve();
     }
@@ -38,13 +38,14 @@ export default class extends Controller {
             this._recreateSortable();
             this._restoreViewport();
             this._restoreEditMode();
+            this._replaceFormsInPreview();
         };
         this.editor.on('render:finished', this._onRenderFinished);
 
         this._onEditorRequestStarted = () => {
             const p = this.editor.backendRequest?.promise;
             if (p) {
-                this._liveQueue = this._liveQueue.then(() => p).catch(() => {});
+                this._liveQueue = this._liveQueue.then(() => p).catch(() => { });
             }
         };
         this.editor.on('request:started', this._onEditorRequestStarted);
@@ -84,7 +85,7 @@ export default class extends Controller {
 
     runSerial(fn) {
         const next = this._liveQueue.then(() => fn());
-        this._liveQueue = next.catch(() => {});
+        this._liveQueue = next.catch(() => { });
         return next;
     }
 
@@ -160,7 +161,7 @@ export default class extends Controller {
                             ?? parentComponent?.dataset?.keyOfComponent;
                     }
 
-                    this.runSerial(() => this.editor.action('add', {'component': element.getAttribute('data-component'), 'order': newIndex, keys}));
+                    this.runSerial(() => this.editor.action('add', { 'component': element.getAttribute('data-component'), 'order': newIndex, keys }));
                 } else {
                     const component = element.__component;
                     const keyOfComponent = component?.keyOfComponent
@@ -168,12 +169,12 @@ export default class extends Controller {
                         ?? element.dataset?.keyOfComponent;
 
                     const keys = this.#parentKeysForMove(keyOfComponent);
-                    this.runSerial(() => this.editor.action('move', {'old' : oldIndex, 'new' : newIndex, keys}));
+                    this.runSerial(() => this.editor.action('move', { 'old': oldIndex, 'new': newIndex, keys }));
                 }
             }
         });
     }
-    
+
     open() {
         document.body.style.overflow = 'hidden';
         this.modalTarget.showModal();
@@ -189,7 +190,7 @@ export default class extends Controller {
         this.save();
         try {
             await this._liveQueue;
-        } catch (_) {}
+        } catch (_) { }
         this.close();
     }
 
@@ -211,7 +212,7 @@ export default class extends Controller {
             if (s && ['desktop', 'laptop', 'ipad', 'iphone'].includes(s)) {
                 mode = s;
             }
-        } catch (_) {}
+        } catch (_) { }
         this._applyViewport(mode);
     }
 
@@ -225,7 +226,7 @@ export default class extends Controller {
         pane.classList.add(`ux-editor-preview--${mode}`);
         try {
             localStorage.setItem('ux-editor-viewport', mode);
-        } catch (_) {}
+        } catch (_) { }
         this.element.querySelectorAll('[data-viewport]').forEach((btn) => {
             const pressed = btn.dataset.viewport === mode;
             btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
@@ -242,6 +243,7 @@ export default class extends Controller {
         this._applyEditMode(mode);
     }
 
+
     _restoreEditMode() {
         if (!this.hasEditPaneTarget || !this.hasRenderPaneTarget) {
             return;
@@ -252,7 +254,7 @@ export default class extends Controller {
             if (s === 'render' || s === 'edit') {
                 mode = s;
             }
-        } catch (_) {}
+        } catch (_) { }
         this._applyEditMode(mode);
     }
 
@@ -271,12 +273,44 @@ export default class extends Controller {
         }
         try {
             localStorage.setItem('ux-editor-edit-mode', mode);
-        } catch (_) {}
+        } catch (_) { }
         this.element.querySelectorAll('[data-edit-mode]').forEach((btn) => {
             const pressed = btn.dataset.editMode === mode;
             btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
             btn.classList.toggle('text-slate-300', pressed);
             btn.classList.toggle('text-slate-400', !pressed);
+        });
+
+        if (mode === 'render') {
+            this._replaceFormsInPreview();
+        }
+    }
+
+    // Aperçu rendu : <form> → <div> pour éviter un formulaire imbriqué dans le form admin.
+    _replaceFormsInPreview() {
+        if (!this.hasRenderPaneTarget || this.renderPaneTarget.classList.contains('hidden')) {
+            return;
+        }
+
+        this.renderPaneTarget.querySelectorAll('form').forEach((form) => {
+            const div = document.createElement('div');
+
+            for (const attr of form.attributes) {
+                if (attr.name === 'action' || attr.name === 'method' || attr.name === 'enctype') {
+                    continue;
+                }
+                div.setAttribute(attr.name, attr.value);
+            }
+
+            while (form.firstChild) {
+                div.appendChild(form.firstChild);
+            }
+
+            form.replaceWith(div);
+        });
+
+        this.renderPaneTarget.querySelectorAll('input, textarea, select, button').forEach((el) => {
+            el.disabled = true;
         });
     }
 
@@ -301,43 +335,43 @@ export default class extends Controller {
         if (!this.draggableContainerTargets.includes(sourceContainer) && (sourceContainer !== newContainer)) {
             return false;
         }
-        
+
         if (!this.#isDroppableInEligibleContainer(newContainer)) {
             return false;
         }
-        
+
         if (this.draggableContainerTargets.includes(sourceContainer) && this.draggableContainerTargets.includes(newContainer)) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     #isDroppableInEligibleContainer(droppable) {
         const id = droppable.id;
         const eligibleDroppable = this.eligibleDroppableContainers.find((container) => container.id === id);
         return !!eligibleDroppable;
     }
-    
+
     setSortable(evt) {
         const droppableContainer = evt.target.closest("[data-editor-target*='droppableContainer']");
         if (!droppableContainer) {
             return;
         }
-        
+
         if (!this.#isDroppableInEligibleContainer(droppableContainer) || (this.#isDroppableInEligibleContainer(droppableContainer) && this.eligibleDroppableContainers.length !== 1)) {
             this.eligibleDroppableContainers = [droppableContainer];
         } else {
             this.eligibleDroppableContainers = this.droppableContainerTargets;
         }
-        
+
         this.initializeEligibleDroppableContainers();
     }
-    
+
     unsetSortable(evt) {
         this.eligibleDroppableContainers = this.droppableContainerTargets;
     }
-    
+
     initializeEligibleDroppableContainers() {
         document.querySelectorAll('.droppable-container--active').forEach((container) => {
             container.classList.remove('droppable-container--active');
@@ -359,7 +393,7 @@ export default class extends Controller {
             }
         });
     }
-    
+
     save() {
         this.runSerial(() => {
             const edits = this.element.querySelectorAll('.c-component-edit');
@@ -369,7 +403,7 @@ export default class extends Controller {
                 const keyOfComponent = component?.keyOfComponent
                     ?? component?.valueStore?.props?.keyOfComponent
                     ?? edit.dataset?.keyOfComponent;
-                
+
                 if (componentPendingFiles) {
                     for (const [key, file] of Object.entries(componentPendingFiles)) {
                         const newKey = key.replace('component', `component[${keyOfComponent}]`);
@@ -377,7 +411,7 @@ export default class extends Controller {
                     }
                 }
             });
-            
+
             return this.editor.action('save');
         });
     }

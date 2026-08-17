@@ -83,6 +83,61 @@ export default class extends Controller {
         }, 500);
     }
 
+    #collectFormValues() {
+        const form = this.element.querySelector('form');
+        if (!form) {
+            return {};
+        }
+
+        const formName = form.getAttribute('name') ?? '';
+        const values = {};
+
+        for (const [fullKey, value] of new FormData(form).entries()) {
+            let path;
+
+            if (formName !== '' && fullKey.startsWith(`${formName}[`)) {
+                path = fullKey
+                    .slice(formName.length + 1, -1)
+                    .split('][');
+            } else if (formName !== '' && fullKey === formName) {
+                continue;
+            } else {
+                path = [fullKey];
+            }
+
+            this.#setDeep(values, path, value);
+        }
+
+        return values;
+    }
+
+    #setDeep(object, path, value) {
+        let current = object;
+
+        for (let i = 0; i < path.length - 1; i++) {
+            const key = path[i];
+            if (!(key in current) || typeof current[key] !== 'object' || current[key] === null) {
+                current[key] = {};
+            }
+            current = current[key];
+        }
+
+        const lastKey = path[path.length - 1];
+        const existing = current[lastKey];
+
+        if (existing === undefined) {
+            current[lastKey] = value;
+            return;
+        }
+
+        if (Array.isArray(existing)) {
+            existing.push(value);
+            return;
+        }
+
+        current[lastKey] = [existing, value];
+    }
+
     #syncNow() {
         if (!this.editorEdit) {
             return Promise.resolve();
@@ -91,11 +146,13 @@ export default class extends Controller {
         if (key === undefined || key === '') {
             return Promise.resolve();
         }
+        const formValues = this.#collectFormValues();
         const parent = this.#getParentEditorController();
+        const sync = () => this.editorEdit.action('sync', { key, formValues });
         if (parent && typeof parent.runSerial === 'function') {
-            return parent.runSerial(() => this.editorEdit.action('sync', { key }));
+            return parent.runSerial(sync);
         }
-        return this.editorEdit.action('sync', { key });
+        return sync();
     }
 
     async #syncThenSave() {

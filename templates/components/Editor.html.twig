@@ -1,7 +1,7 @@
 <div{{ attributes.defaults({class: 'ux-editor-shell flex flex-col h-[100dvh] max-h-[100dvh] min-h-0 bg-slate-950 text-slate-100'}) }}>
     <header class="flex shrink-0 items-center justify-between gap-4 border-b border-slate-800/90 bg-slate-900/90 px-4 py-3 backdrop-blur-sm">
         <div class="min-w-0">
-            <h1 class="truncate text-base font-semibold tracking-tight text-white">Éditeur de contenu</h1>
+            <h1 class="truncate text-base font-sans tracking-tight text-white">Éditeur de contenu</h1>
             <p class="truncate text-xs text-slate-400">Glissez des blocs depuis la bibliothèque ou réorganisez-les dans la zone centrale.</p>
         </div>
         <button type="button" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80" {{ stimulus_action('editor', 'close') }} aria-label="Fermer l’éditeur">
@@ -28,6 +28,7 @@
                 <twig:ux:icon name="bi:phone" class="h-5 w-5" aria-hidden="true"/>
             </button>
         </div>
+        {% if previewEnabled %}
         <div class="inline-flex rounded-xl border border-slate-800 bg-slate-900/80 p-1 shadow-inner" role="group" aria-label="Mode édition ou rendu">
             <button type="button" class="ux-editor-viewport-btn rounded-lg px-3 py-2 text-slate-300 transition hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70" data-edit-mode="edit" aria-pressed="true" title="Édition des blocs" {{ stimulus_action('editor', 'setEditMode', 'click', { mode: 'edit' }) }}>
                 <span class="sr-only">Édition</span>
@@ -38,13 +39,14 @@
                 <twig:ux:icon name="mdi:eye-outline" class="h-5 w-5" aria-hidden="true"/>
             </button>
         </div>
+        {% endif %}
     </div>
 
     <div class="flex min-h-0 flex-1 flex-nowrap">
         <aside class="flex w-[min(20rem,92vw)] shrink-0 flex-col border-r border-slate-800/90 bg-slate-900/70 min-h-0">
             <div class="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-3 py-4 ux-editor-scroll">
                 <section id="Elements" aria-labelledby="ux-editor-library-heading" {{ stimulus_target('editor', 'draggableContainer sortableContainer') }} class="space-y-5">
-                    <h2 id="ux-editor-library-heading" class="text-xs font-semibold uppercase tracking-wider text-slate-500">Bibliothèque</h2>
+                    <h2 id="ux-editor-library-heading" class="text-xs font-sans uppercase tracking-wider text-slate-500">Bibliothèque</h2>
                     {% for category, component in components %}
                         <details open class="group rounded-xl border border-slate-800/80 bg-slate-950/40">
                             <summary class="cursor-pointer list-none px-3 py-2.5 text-sm font-medium text-slate-200 marker:content-none [&::-webkit-details-marker]:hidden flex items-center justify-between gap-2">
@@ -67,7 +69,7 @@
             </div>
             <section id="Layers" aria-labelledby="ux-editor-layers-heading" class="shrink-0 border-t border-slate-800 bg-slate-950/50">
                 <div class="max-h-[40vh] overflow-y-auto overscroll-contain px-3 py-3 ux-editor-scroll">
-                    <h2 id="ux-editor-layers-heading" class="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Calques</h2>
+                    <h2 id="ux-editor-layers-heading" class="mb-2 text-xs font-sans uppercase tracking-wider text-slate-500">Calques</h2>
                     <div {{ stimulus_target('editor', 'droppableContainer sortableContainer') }} id="LayersElements" class="space-y-1">
                         {% for key, component in value.components %}
                             <twig:UX:Editor:ComponentLayer :keyOfComponent="key" key="{{ component.id }}" :component="component" sortable class="cursor-move"/>
@@ -96,6 +98,7 @@
                 <twig:UX:Editor:ComponentEdit :component="component" data-editor-target="edits" sortable :keyOfComponent="key" :editorId="inputId" key="{{ component.id }}"/>
             {% endfor %}
             </div>
+            {% if previewEnabled %}
             <div class="hidden flex min-h-0 min-w-0 flex-1 flex-col" {{ stimulus_target('editor', 'renderPane') }}>
                 {% if value.components is empty %}
                     <div class="mx-auto flex max-w-md flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700/90 bg-slate-900/40 px-8 py-16 text-center">
@@ -104,10 +107,11 @@
                     </div>
                 {% else %}
                     <div class="min-h-full w-full rounded-2xl bg-white p-6 text-slate-900 shadow-lg ring-1 ring-slate-800/60">
-                        <twig:UX:Editor:Render :content="value"/>
+                        <twig:UX:Editor:Render :content="value" :preview="true"/>
                     </div>
                 {% endif %}
             </div>
+            {% endif %}
             </div>
         </div>
     </div>
@@ -119,7 +123,7 @@
                 <twig:ux:icon name="carbon:return" class="h-4 w-4" />
                 Fermer
             </button>
-            <button type="button" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-sky-600 px-5 text-sm font-semibold text-white shadow-md shadow-sky-900/20 transition hover:bg-sky-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400" {{ stimulus_action('editor', 'saveAndClose') }}>
+            <button type="button" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-sky-600 px-5 text-sm font-sans text-white shadow-md shadow-sky-900/20 transition hover:bg-sky-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400" {{ stimulus_action('editor', 'saveAndClose') }}>
                 <twig:ux:icon name="mdi:content-save-outline" class="h-4 w-4" />
                 Enregistrer et fermer
             </button>

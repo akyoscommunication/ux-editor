@@ -38,6 +38,9 @@ final class Editor extends AbstractController
     #[LiveProp]
     public array $allowedComponents = [];
 
+    #[LiveProp]
+    public bool $previewEnabled = true;
+
     #[ExposeInTemplate('components')]
     public function getComponents(): array
     {

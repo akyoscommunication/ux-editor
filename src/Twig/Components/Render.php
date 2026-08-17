@@ -9,4 +9,6 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class Render
 {
     public Content $content;
+
+    public bool $preview = false;
 }

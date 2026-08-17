@@ -15,7 +15,7 @@
     {% if label is not same as(false) and not ('radio' in form.vars.block_prefixes or 'collection_entry' in block_prefixes) -%}
         {%- set label_attr = label_attr|merge({class: ''}) -%}
         {% if 'collection' not in block_prefixes and not compound %}
-            {%- set label_attr = label_attr|merge({class: (label_attr.class ~ ' absolute block text-xs px-2 py-0 left-3 top-0 -translate-y-1/2 bg-gray-800 text-span z-10')|trim}) -%}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class ~ 'inline-block text-xs py-0 text-gray-400 z-10')|trim}) -%}
         {% endif %}
         {%- if compound is defined and compound -%}
             {%- set element = 'legend' -%}
@@ -88,8 +88,9 @@
 {%- endblock form_widget_compound -%}
 
 {% block choice_widget -%}
-    {%- if (type is not defined or type != 'hidden') and not ('radio_group' in form.vars.block_prefixes) -%}
-        {%- set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-2 w-full focus:border-2 dark:border-white dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
+    {%- set uses_autocomplete = uses_autocomplete|default(false) -%}
+    {%- if (type is not defined or type != 'hidden') and not ('radio_group' in form.vars.block_prefixes) and not uses_autocomplete -%}
+        {%- set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-1 w-full focus:border-1 border-slate-700/70 dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
     {%- endif -%}
     {%- if 'radio_group' in form.vars.block_prefixes -%}
         {%- set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent w-full flex gap-5')~ ' '~(disabled ? ' ' : 'disabled'))|trim}) -%}
@@ -100,9 +101,39 @@
     {{- parent() -}}
 {%- endblock choice_widget %}
 
+{%- block choice_widget_collapsed -%}
+    {%- if required and placeholder is none and not placeholder_in_choices and not multiple and (attr.size is not defined or attr.size <= 1) -%}
+        {%- set required = false -%}
+    {%- endif -%}
+    {%- set uses_autocomplete = uses_autocomplete|default(false) -%}
+    {%- if not uses_autocomplete -%}
+        {%- set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-1 w-full focus:border-1 border-slate-700/70 dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
+    {%- endif -%}
+    {%- if uses_autocomplete -%}
+        <div data-live-ignore>
+    {%- endif -%}
+    <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
+        {%- if placeholder is not none -%}
+            <option value=""{% if required and value is empty %} selected="selected"{% endif %}>{{ placeholder != '' ? (translation_domain is same as(false) ? placeholder : placeholder|trans({}, translation_domain)) }}</option>
+        {%- endif -%}
+        {%- if preferred_choices|length > 0 -%}
+            {% set options = preferred_choices %}
+            {{- block('choice_widget_options') -}}
+            {%- if choices|length > 0 and separator is none -%}
+                <option disabled="disabled">{{ separator }}</option>
+            {%- endif -%}
+        {%- endif -%}
+        {%- set options = choices -%}
+        {{- block('choice_widget_options') -}}
+    </select>
+    {%- if uses_autocomplete -%}
+        </div>
+    {%- endif -%}
+{%- endblock choice_widget_collapsed -%}
+
 {% block form_widget_simple -%}
     {%- if type is not defined or type != 'hidden' -%}
-        {%- set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-2 w-full focus:border-2 dark:border-white dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
+        {%- set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-1 w-full focus:border-1 border-slate-700/70 dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
 
         {% if attr.ico is defined and attr.ico %}
             <twig:ux:icon :name="attr.ico" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"/>
@@ -118,7 +149,7 @@
 {%- endblock form_widget_simple %}
 
 {% block password_widget %}
-    {% set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-2 w-full focus:border-2 dark:border-white dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
+    {% set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-1 w-full focus:border-1 border-slate-700/70 dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
     <div data-controller="password-visibility" class="relative">
         {{ form_label(form) }}
         <input type="password" {{ block('widget_attributes') }} data-password-visibility-target="input"
@@ -134,7 +165,7 @@
 {% block radio_widget %}
     <div class="flex gap-2">
         <div class="grid place-items-center">
-            <input {{ form.vars.data ? 'checked' : ''}} type="radio" {{ block('widget_attributes') }} value="{{ value }}" class="col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 border-2 border-blue rounded-full"/>
+            <input {{ form.vars.data ? 'checked' : ''}} type="radio" {{ block('widget_attributes') }} value="{{ value }}" class="col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 border-1 border-blue rounded-full"/>
             <div class="col-start-1 row-start-1 w-2.5 h-2.5 rounded-full"></div>
         </div>
         <label for="{{ id }}" class="text-start">{{ label|trans(label_translation_parameters, translation_domain) }}</label>
@@ -154,7 +185,7 @@
 {%- endblock form_errors %}
 
 {%- block textarea_widget -%}
-    {% set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-2 w-full focus:border-2 dark:border-white dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
+    {% set attr = attr|merge({class: (attr.class|default('p-4 bg-transparent rounded border border-1 w-full focus:border-1 border-slate-700/70 dark:text-white')~ ' '~(errors|length > 0 ? ' border-red' : ' border-gray')~(disabled ? ' ' : ''))|trim}) -%}
     <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
 {%- endblock textarea_widget -%}
 
@@ -170,6 +201,81 @@
         {{- form_help(form) -}}
     </div>
 {%- endblock editor_data_value_row -%}
+
+{%- block ux_filemanager_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~ '_help'}} -%}
+    {%- endif -%}
+    <div{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' relative col-span-6 block')|trim})} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_label(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock ux_filemanager_row -%}
+
+{%- block ux_filemanager_widget -%}
+    {% set mimeType = '' %}
+    {% set renderUrl = '' %}
+    {% set ux_file = '' %}
+    {% if value %}
+        {% set ux_file = value|ux_filemanager_file %}
+        {% if ux_file %}
+            {% set renderUrl = ux_file.path|ux_filemanager_render %}
+            {% set mimeType = ux_file.mime %}
+        {% endif %}
+    {% endif %}
+
+    <div {{ stimulus_controller('ux-filemanager', {'data': renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager-picker" data-live-ignore>
+        <input type="hidden" {{ block('widget_attributes') }} {{ stimulus_target('ux-filemanager', 'input') }}>
+
+        <div class="ux-filemanager-picker__preview">
+            <div class="ux-filemanager-picker__empty">
+                <twig:ux:icon name="mdi:image-outline" class="ux-filemanager-picker__empty-icon" aria-hidden="true"/>
+                <p class="ux-filemanager-picker__empty-title">{{ 'filemanager.empty'|trans({}, 'builder') }}</p>
+            </div>
+            <img src="" alt="" {{ stimulus_target('ux-filemanager', 'preview previewImage') }}>
+            <embed src="" {{ stimulus_target('ux-filemanager', 'preview previewEmbed') }}>
+            <div class="ux-filemanager-picker__actions">
+                <button type="button" class="ux-filemanager-picker__btn ux-filemanager-picker__btn--browse"
+                    title="{{ 'filemanager.browse'|trans({}, 'builder') }}"
+                    {{ stimulus_action('ux-filemanager', 'open') }}>
+                    <twig:ux:icon name="mdi:folder-open-outline" class="h-4 w-4 shrink-0" aria-hidden="true"/>
+                    <span>{{ 'filemanager.browse'|trans({}, 'builder') }}</span>
+                </button>
+                {% if button_clear is defined and button_clear %}
+                    <button type="button" class="ux-filemanager-picker__btn ux-filemanager-picker__btn--remove"
+                        title="{{ 'filemanager.remove'|trans({}, 'builder') }}"
+                        {{ stimulus_action('ux-filemanager', 'reset') }}>
+                        <twig:ux:icon name="tabler:trash" class="h-4 w-4 shrink-0" aria-hidden="true"/>
+                        <span>{{ 'filemanager.remove'|trans({}, 'builder') }}</span>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <p class="ux-filemanager-picker__name" {{ stimulus_target('ux-filemanager', 'name') }}>{{ ux_file ? ux_file.name : '' }}</p>
+
+        <dialog {{ stimulus_target('ux-filemanager', 'modal') }} class="ux-filemanager-picker__modal">
+            {% if app.request.server.get('HTTP_SEC_CH_UA_PLATFORM') is same as('"macOS"') %}
+                <div class="ux-filemanager-picker__modal-bar">
+                    <button type="button" class="ux-filemanager-picker__modal-dot ux-filemanager-picker__modal-dot--close" {{ stimulus_action('ux-filemanager', 'close') }} aria-label="Fermer"></button>
+                    <button type="button" class="ux-filemanager-picker__modal-dot ux-filemanager-picker__modal-dot--minimize" {{ stimulus_action('ux-filemanager', 'minimize') }} aria-label="Réduire"></button>
+                    <button type="button" class="ux-filemanager-picker__modal-dot ux-filemanager-picker__modal-dot--resize" {{ stimulus_action('ux-filemanager', 'resize') }} aria-label="Agrandir"></button>
+                </div>
+            {% else %}
+                <div class="ux-filemanager-picker__modal-bar ux-filemanager-picker__modal-bar--win">
+                    <button type="button" class="ux-filemanager-picker__modal-win-btn" {{ stimulus_action('ux-filemanager', 'minimize') }} aria-label="Réduire">—</button>
+                    <button type="button" class="ux-filemanager-picker__modal-win-btn" {{ stimulus_action('ux-filemanager', 'resize') }} aria-label="Agrandir">□</button>
+                    <button type="button" class="ux-filemanager-picker__modal-win-btn ux-filemanager-picker__modal-win-btn--close" {{ stimulus_action('ux-filemanager', 'close') }} aria-label="Fermer">✕</button>
+                </div>
+            {% endif %}
+
+            <twig:UX:FileManager :path="path" :inputId="id"/>
+        </dialog>
+    </div>
+{%- endblock ux_filemanager_widget -%}
 
 {%- block ux_editor_file_widget -%}
     {% if data %}

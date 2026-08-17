@@ -574,10 +574,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   position: relative;
 }
 
-.ux-editor .left-3 {
-  left: 0.75rem;
-}
-
 .ux-editor .left-4 {
   left: 1rem;
 }
@@ -670,6 +666,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   display: block;
 }
 
+.ux-editor .inline-block {
+  display: inline-block;
+}
+
 .ux-editor .flex {
   display: flex;
 }
@@ -688,6 +688,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .ux-editor .h-10 {
   height: 2.5rem;
+}
+
+.ux-editor .h-12 {
+  height: 3rem;
 }
 
 .ux-editor .h-14 {
@@ -763,8 +767,16 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   min-height: 2.75rem;
 }
 
+.ux-editor .min-h-full {
+  min-height: 100%;
+}
+
 .ux-editor .w-10 {
   width: 2.5rem;
+}
+
+.ux-editor .w-12 {
+  width: 3rem;
 }
 
 .ux-editor .w-14 {
@@ -869,6 +881,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .ux-editor .cursor-pointer {
   cursor: pointer;
+}
+
+.ux-editor .resize {
+  resize: both;
 }
 
 .ux-editor .list-none {
@@ -1014,10 +1030,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .ux-editor .border-0 {
   border-width: 0px;
-}
-
-.ux-editor .border-2 {
-  border-width: 2px;
 }
 
 .ux-editor .border-b {
@@ -1189,6 +1201,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .ux-editor .bg-transparent {
   background-color: transparent;
+}
+
+.ux-editor .bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
 .ux-editor .bg-gradient-to-b {
@@ -1377,6 +1394,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   letter-spacing: 0.05em;
 }
 
+.ux-editor .text-gray-400 {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+}
+
 .ux-editor .text-inherit {
   color: inherit;
 }
@@ -1434,9 +1456,19 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   color: rgb(100 116 139 / var(--tw-text-opacity, 1));
 }
 
+.ux-editor .text-slate-600 {
+  --tw-text-opacity: 1;
+  color: rgb(71 85 105 / var(--tw-text-opacity, 1));
+}
+
 .ux-editor .text-slate-800 {
   --tw-text-opacity: 1;
   color: rgb(30 41 59 / var(--tw-text-opacity, 1));
+}
+
+.ux-editor .text-slate-900 {
+  --tw-text-opacity: 1;
+  color: rgb(15 23 42 / var(--tw-text-opacity, 1));
 }
 
 .ux-editor .text-white {
@@ -1489,6 +1521,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
+.ux-editor .ring-slate-800\/60 {
+  --tw-ring-color: rgb(30 41 59 / 0.6);
+}
+
 .ux-editor .ring-white\/5 {
   --tw-ring-color: rgb(255 255 255 / 0.05);
 }
@@ -1506,6 +1542,20 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+.ux-editor .transition-\[max-width\2c box-shadow\] {
+  transition-property: max-width,box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.ux-editor .duration-300 {
+  transition-duration: 300ms;
+}
+
+.ux-editor .ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
 .ux-editor #Elements {
@@ -1606,32 +1656,465 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   box-shadow: inset 0 0 0 1px rgb(56 189 248 / 0.35);
 }
 
-.ux-editor .ux-editor-preview-pane.ux-editor-preview--desktop {
+.ux-editor .ux-editor .ux-editor-preview-pane.ux-editor-preview--desktop {
   max-width: 100%;
   border-radius: 0;
   box-shadow: none;
   border: none;
 }
 
-.ux-editor .ux-editor-preview-pane.ux-editor-preview--laptop {
+.ux-editor .ux-editor .ux-editor-preview-pane.ux-editor-preview--laptop {
   max-width: 1280px;
   border-radius: 0.75rem;
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.45);
   border: 1px solid rgb(51 65 85 / 0.9);
 }
 
-.ux-editor .ux-editor-preview-pane.ux-editor-preview--ipad {
+.ux-editor .ux-editor .ux-editor-preview-pane.ux-editor-preview--ipad {
   max-width: 834px;
   border-radius: 1rem;
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.45);
   border: 1px solid rgb(51 65 85 / 0.9);
 }
 
-.ux-editor .ux-editor-preview-pane.ux-editor-preview--iphone {
+.ux-editor .ux-editor .ux-editor-preview-pane.ux-editor-preview--iphone {
   max-width: 390px;
   border-radius: 1.5rem;
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
   border: 1px solid rgb(51 65 85 / 0.95);
+}
+
+/* ponytail: Tom Select sombre — hors @layer (classes ts-* générées en JS, absentes du scan Tailwind) */
+
+.ux-editor .ts-hidden-accessible {
+  border: 0 !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  white-space: nowrap !important;
+  width: 1px !important;
+  height: 1px !important;
+}
+
+.ux-editor .ts-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.ux-editor .ts-control,
+.ux-editor .full .ts-control {
+  display: flex;
+  min-height: 3.25rem;
+  width: 100%;
+  flex-wrap: wrap;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  border: 1px solid rgb(51 65 85 / 0.7);
+  background-color: transparent;
+  padding: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #fff;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.ux-editor .focus .ts-control {
+  border-color: rgb(100 116 139);
+  outline: none;
+  box-shadow: 0 0 0 1px rgb(14 165 233 / 0.5);
+}
+
+.ux-editor .ts-control > div.item,
+.ux-editor .ts-wrapper.multi .ts-control > div.item {
+  margin: 0 0.25rem 0 0;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  border: 0;
+  background-color: rgb(51 65 85);
+  padding: 0.125rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #fff;
+}
+
+.ux-editor .ts-control > input {
+  flex: 1 1 auto;
+  min-width: 7rem;
+  display: inline-block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  max-width: 100% !important;
+  text-indent: 0 !important;
+  border: 0 none !important;
+  background: none !important;
+  line-height: inherit !important;
+  box-shadow: none !important;
+  font-size: 0.875rem;
+  color: #fff;
+}
+
+.ux-editor .ts-control > input:focus {
+  outline: none !important;
+}
+
+.ux-editor .disabled .ts-control {
+  opacity: 0.5;
+}
+
+.ux-editor .ts-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  margin-top: 0.25rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(51 65 85);
+  background-color: rgb(30 41 59);
+  color: rgb(241 245 249);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.25);
+  box-sizing: border-box;
+}
+
+.ux-editor .ts-dropdown-content {
+  max-height: 15rem;
+  overflow-y: auto;
+  border-radius: 0.375rem;
+}
+
+.ux-editor .ts-dropdown .option,
+.ux-editor .ts-dropdown .optgroup-header,
+.ux-editor .ts-dropdown .no-results,
+.ux-editor .ts-dropdown .create {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.ux-editor .ts-dropdown .active,
+.ux-editor .ts-dropdown [data-selectable]:hover {
+  background-color: rgb(51 65 85);
+  color: #fff;
+}
+
+.ux-editor .ts-dropdown .no-results,
+.ux-editor .ts-dropdown .loading-more-results,
+.ux-editor .ts-dropdown .no-more-results {
+  color: rgb(148 163 184);
+}
+
+.ux-editor .ts-wrapper.single .ts-control {
+  cursor: text;
+}
+
+.ux-editor .plugin-clear_button .clear-button {
+  color: rgb(148 163 184);
+}
+
+.ux-editor .plugin-clear_button .clear-button:hover {
+  color: #fff;
+}
+
+.ux-editor .plugin-remove_button .item .remove {
+  border-left: 1px solid rgb(71 85 105);
+  color: rgb(148 163 184);
+}
+
+.ux-editor .plugin-remove_button .item .remove:hover {
+  color: #fff;
+}
+
+.ux-editor .ux-filemanager-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 14rem;
+  max-width: 100%;
+}
+
+.ux-editor .ux-filemanager-picker__preview {
+  position: relative;
+  width: 100%;
+  height: 14rem;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px dashed rgb(71 85 105 / 0.85);
+  background-color: rgb(30 41 59 / 0.55);
+}
+
+.ux-editor .ux-filemanager-picker__empty {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1rem 3.5rem;
+  text-align: center;
+}
+
+.ux-editor .ux-filemanager-picker__empty-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: rgb(100 116 139);
+}
+
+.ux-editor .ux-filemanager-picker__empty-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  color: rgb(226 232 240);
+}
+
+.ux-editor .ux-filemanager-picker__empty-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  color: rgb(148 163 184);
+}
+
+.ux-editor .ux-filemanager-picker__preview img,
+.ux-editor .ux-filemanager-picker__preview embed {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border: 0;
+}
+
+.ux-editor .ux-filemanager-picker__actions {
+  position: absolute;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem;
+  background: linear-gradient(to top, rgb(15 23 42 / 0.92), rgb(15 23 42 / 0.55) 70%, transparent);
+}
+
+.ux-editor .ux-filemanager-picker__btn {
+  display: inline-flex;
+  width: auto;
+  height: auto;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ux-editor .ux-filemanager-picker__btn--browse {
+  border-color: rgb(12 74 110 / 0.7);
+  background-color: rgb(8 47 73 / 0.85);
+  color: rgb(186 230 253);
+}
+
+.ux-editor .ux-filemanager-picker__btn--browse:hover {
+  border-color: rgb(14 165 233 / 0.7);
+  background-color: rgb(12 74 110 / 0.9);
+  color: #fff;
+}
+
+.ux-editor .ux-filemanager-picker__btn--remove {
+  border-color: rgb(127 29 29 / 0.7);
+  background-color: rgb(69 10 10 / 0.85);
+  color: rgb(254 202 202);
+}
+
+.ux-editor .ux-filemanager-picker__btn--remove:hover {
+  border-color: rgb(244 63 94 / 0.7);
+  background-color: rgb(127 29 29 / 0.9);
+  color: #fff;
+}
+
+.ux-editor .ux-filemanager-picker__name {
+  margin: 0;
+  min-height: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(148 163 184);
+}
+
+.ux-editor .ux-filemanager-picker__modal:not([open]) {
+  display: none !important;
+}
+
+.ux-editor .ux-filemanager-picker__modal[open] {
+  width: 80vw;
+  height: 80vh;
+  max-width: none;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgb(51 65 85 / 0.9);
+  border-radius: 0.75rem;
+  background-color: rgb(15 23 42);
+  color: rgb(241 245 249);
+}
+
+.ux-editor .ux-filemanager-picker__modal::backdrop {
+  background-color: rgb(0 0 0 / 0.65);
+  backdrop-filter: blur(2px);
+}
+
+.ux-editor .ux-filemanager-picker__modal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  background-color: rgb(15 23 42);
+  padding: 0.5rem 1rem;
+}
+
+.ux-editor .ux-filemanager-picker__modal-bar--win {
+  justify-content: flex-end;
+}
+
+.ux-editor .ux-filemanager-picker__modal-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 0;
+  border-radius: 9999px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.ux-editor .ux-filemanager-picker__modal-dot--close {
+  background-color: rgb(220 38 38);
+}
+
+.ux-editor .ux-filemanager-picker__modal-dot--minimize {
+  background-color: rgb(202 138 4);
+}
+
+.ux-editor .ux-filemanager-picker__modal-dot--resize {
+  background-color: rgb(74 222 128);
+}
+
+.ux-editor .ux-filemanager-picker__modal-win-btn {
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  padding: 0.25rem 0.5rem;
+  color: rgb(226 232 240);
+  cursor: pointer;
+}
+
+.ux-editor .ux-filemanager-picker__modal-win-btn:hover {
+  background-color: rgb(30 41 59);
+}
+
+.ux-editor .ux-filemanager-picker__modal-win-btn--close {
+  color: rgb(252 165 165);
+}
+
+.ux-editor .ux-filemanager-picker__modal-win-btn--close:hover {
+  background-color: rgb(69 10 10);
+}
+
+/* ponytail: Quill sombre — hors @layer (classes ql-* générées en JS, absentes du scan Tailwind) */
+
+.ux-editor .ql-toolbar.ql-snow,
+.ux-editor .ql-container.ql-snow {
+  border-color: rgb(51 65 85 / 0.7);
+}
+
+.ux-editor .ql-toolbar.ql-snow {
+  background-color: rgb(15 23 42 / 0.5);
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.ux-editor .ql-container.ql-snow {
+  background-color: transparent;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  font-family: inherit;
+}
+
+.ux-editor .ql-editor {
+  color: #fff;
+  min-height: 8rem;
+}
+
+.ux-editor .ql-editor.ql-blank::before {
+  color: rgb(255 255 255 / 0.55);
+  font-style: normal;
+}
+
+.ux-editor .ql-snow .ql-stroke {
+  stroke: rgb(148 163 184);
+}
+
+.ux-editor .ql-snow .ql-fill,
+.ux-editor .ql-snow .ql-stroke.ql-fill {
+  fill: rgb(148 163 184);
+}
+
+.ux-editor .ql-snow .ql-picker-label {
+  color: rgb(148 163 184);
+}
+
+.ux-editor .ql-snow .ql-picker.ql-expanded .ql-picker-label {
+  color: #fff;
+  border-color: rgb(51 65 85 / 0.7);
+}
+
+.ux-editor .ql-snow .ql-picker-options {
+  background-color: rgb(30 41 59);
+  border-color: rgb(51 65 85);
+  color: rgb(241 245 249);
+}
+
+.ux-editor .ql-snow .ql-picker-item {
+  color: rgb(241 245 249);
+}
+
+.ux-editor .ql-snow .ql-picker-item:hover,
+.ux-editor .ql-snow .ql-picker-item.ql-selected {
+  color: #fff;
+}
+
+.ux-editor .ql-snow.ql-toolbar button:hover .ql-stroke,
+.ux-editor .ql-snow .ql-toolbar button:hover .ql-stroke,
+.ux-editor .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.ux-editor .ql-snow .ql-toolbar button.ql-active .ql-stroke {
+  stroke: #fff;
+}
+
+.ux-editor .ql-snow.ql-toolbar button:hover .ql-fill,
+.ux-editor .ql-snow .ql-toolbar button:hover .ql-fill,
+.ux-editor .ql-snow.ql-toolbar button.ql-active .ql-fill,
+.ux-editor .ql-snow .ql-toolbar button.ql-active .ql-fill {
+  fill: #fff;
+}
+
+.ux-editor .ql-snow a {
+  color: rgb(148 163 184);
 }
 
 .ux-editor .marker\:content-none *::marker {
@@ -1725,10 +2208,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-ring-color: rgb(255 255 255 / 0.1);
 }
 
-.ux-editor .focus\:border-2:focus {
-  border-width: 2px;
-}
-
 .ux-editor .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -1805,11 +2284,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   .ux-editor .dark\:border-slate-700 {
     --tw-border-opacity: 1;
     border-color: rgb(51 65 85 / var(--tw-border-opacity, 1));
-  }
-
-  .ux-editor .dark\:border-white {
-    --tw-border-opacity: 1;
-    border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
   }
 
   .ux-editor .dark\:bg-slate-900\/40 {
