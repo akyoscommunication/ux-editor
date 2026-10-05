@@ -1,0 +1,18 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Builder\PageBuilderBundle\:
+        resource: '../src/'
+        exclude:
+            - '../src/PageBuilderBundle.php'
+            - '../src/Attribute/'
+            - '../src/DependencyInjection/'
+            - '../src/Integration/'
+            - '../src/Model/'
+            - '../src/Form/DataClassType.php'
+
+    Builder\PageBuilderBundle\Service\BlockRegistry:
+        arguments:
+            $definitions: []

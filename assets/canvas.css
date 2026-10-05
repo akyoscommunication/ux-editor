@@ -1,0 +1,11 @@
+/* Utilitaires du front, limités au canvas. `@reference` reprend le thème
+   (couleurs, rayons, police) sans recopier app.css dans l’admin. */
+@reference "../../../assets/styles/app.css";
+
+@source "../../../templates";
+@source "../templates";
+
+@scope ([data-canvas-root]) {
+    @import "tailwindcss/preflight.css";
+    @import "tailwindcss/utilities.css";
+}

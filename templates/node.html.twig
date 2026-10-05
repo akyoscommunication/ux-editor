@@ -1,0 +1,43 @@
+{% for block in blocks %}
+    {% if block.missing|default(false) %}
+        <article data-builder-item data-block-id="{{ block.id }}" class="flex items-center justify-between gap-3 rounded-md border border-dashed border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <p>Bloc « {{ block.type }} » introuvable.</p>
+            <button type="button" class="shrink-0 text-red-600" title="Supprimer" data-action="click->live#action:stop" data-live-action-param="remove" data-live-id-param="{{ block.id }}">{{ ux_icon('heroicons:trash', {class: 'size-4'}) }}</button>
+        </article>
+    {% elseif preview %}
+        <article data-builder-item data-block-id="{{ block.id }}" class="group relative rounded-lg border border-transparent hover:border-blue-400 {% if selectedId|default(null) == block.id %}border-blue-500 ring-2 ring-blue-200{% endif %}" style="{{ builder_margin_style(block.margin|default({})) }}" data-action="click->live#action:stop" data-live-action-param="select" data-live-id-param="{{ block.id }}">
+            <div class="absolute -top-3 right-2 z-10 items-center gap-1 rounded-md border border-zinc-200 bg-white px-1 py-0.5 shadow-sm {{ selectedId|default(null) == block.id ? 'flex' : 'hidden group-hover:flex' }}">
+                <button type="button" data-handle class="cursor-grab px-1 text-zinc-500" title="Déplacer">{{ ux_icon('heroicons:bars-2', {class: 'size-4'}) }}</button>
+                <button type="button" class="px-1 text-zinc-500" title="Dupliquer" data-action="click->live#action:stop" data-live-action-param="duplicate" data-live-id-param="{{ block.id }}">{{ ux_icon('heroicons:document-duplicate', {class: 'size-4'}) }}</button>
+                <button type="button" class="px-1 text-red-600" title="Supprimer" data-action="click->live#action:stop" data-live-action-param="remove" data-live-id-param="{{ block.id }}">{{ ux_icon('heroicons:trash', {class: 'size-4'}) }}</button>
+            </div>
+            <div>
+                {% if block.definition.container %}
+                    <div class="grid gap-3" style="grid-template-columns: repeat({{ block.slots|length }}, minmax(0, 1fr))">
+                        {% for children in block.slots %}
+                            <div data-slot="{{ loop.index0 }}" data-parent-id="{{ block.id }}" class="min-h-24 rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-2">
+                                {% include '@PageBuilder/node.html.twig' with {blocks: children, preview: true, selectedId: selectedId|default(null)} %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {% include block.definition.template with block.view|merge({preview: true}) only %}
+                {% endif %}
+            </div>
+        </article>
+    {% else %}
+        <div style="{{ builder_margin_style(block.margin|default({})) }}">
+            {% if block.definition.container %}
+                <div class="grid gap-6" style="grid-template-columns: repeat({{ block.slots|length }}, minmax(0, 1fr))">
+                    {% for children in block.slots %}
+                        <div>{% include '@PageBuilder/node.html.twig' with {blocks: children, preview: false} %}</div>
+                    {% endfor %}
+                </div>
+            {% elseif block.definition.live %}
+                {{ component(block.definition.component, block.view) }}
+            {% else %}
+                {% include block.definition.template with block.view|merge({preview: false}) only %}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}

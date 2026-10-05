@@ -1,0 +1,35 @@
+{
+    "name": "akyoscommunication/ux-editor",
+    "type": "symfony-bundle",
+    "description": "Page builder style Gutenberg, blocs Symfony et formulaires par attributs.",
+    "license": "proprietary",
+    "version": "2.0.0",
+    "require": {
+        "php": ">=8.4",
+        "doctrine/doctrine-bundle": "^2.13 || ^3.0",
+        "doctrine/orm": "^3.2",
+        "symfony/form": "^8.1",
+        "symfony/framework-bundle": "^8.1",
+        "symfony/security-csrf": "^8.1",
+        "symfony/string": "^8.1",
+        "symfony/twig-bundle": "^8.1",
+        "symfony/ux-dropzone": "^3.5",
+        "symfony/ux-icons": "^3.5",
+        "symfony/ux-live-component": "^3.5",
+        "symfony/ux-twig-component": "^3.5",
+        "symfony/validator": "^8.1"
+    },
+    "suggest": {
+        "jolicode/media-bundle": "Stocke et affiche les images via JoliMedia quand page_builder.joli_media est activé, sans EasyAdmin.",
+        "easycorp/easyadmin-bundle": "Pour poser ContentType dans un CRUD. Avec JoliMedia, le champ image devient le sélecteur de la médiathèque.",
+        "symfony/ux-autocomplete": "IconType affiche les icônes dans un select Tom Select. Sans ce paquet, le champ reste un select natif."
+    },
+    "autoload": {
+        "psr-4": {
+            "Builder\\PageBuilderBundle\\": "src/"
+        },
+        "files": [
+            "compat/form-attributes.php"
+        ]
+    }
+}

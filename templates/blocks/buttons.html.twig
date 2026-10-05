@@ -1,0 +1,11 @@
+<div class="flex flex-wrap gap-2">
+    {% for item in items|default([]) %}
+        {% include '@PageBuilder/blocks/button.html.twig' with {
+            label: item.label,
+            url: item.url,
+            style: item.style,
+        } only %}
+    {% else %}
+        <span class="text-sm text-zinc-400">Aucun bouton</span>
+    {% endfor %}
+</div>

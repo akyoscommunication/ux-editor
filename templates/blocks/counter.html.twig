@@ -1,0 +1,4 @@
+<div {% if attributes is defined %}{{ attributes.defaults({class: 'flex items-center gap-3'}) }}{% else %}class="flex items-center gap-3"{% endif %}>
+    <span class="text-3xl font-semibold tabular-nums">{{ start + count }}</span>
+    <button type="button" class="rounded-md border border-zinc-300 px-3 py-1.5 text-sm" {% if not preview|default(false) %}data-action="live#action" data-live-action-param="increment"{% endif %}>+1</button>
+</div>

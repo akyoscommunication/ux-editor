@@ -1,0 +1,77 @@
+<div {{ attributes }} class="flex h-full min-h-0 flex-col bg-zinc-100 text-zinc-900">
+    {% include '@PageBuilder/_styles.html.twig' %}
+    {% for href in builder_canvas_fonts %}
+        <link rel="stylesheet" href="{{ href }}">
+    {% endfor %}
+    <style>{{ builder_canvas_tokens() }}</style>
+    <header class="flex h-14 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 text-white">
+        <div class="flex items-center gap-3">
+            <span class="text-sm font-semibold tracking-tight">Builder</span>
+        </div>
+        <button type="button" class="rounded-md bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20" onclick="this.closest('dialog').close()">Fermer</button>
+    </header>
+
+    <div id="builder-shell-{{ targetInput }}" data-controller="builder-canvas" class="relative flex min-h-0 flex-1">
+        <aside data-skip-morph class="flex w-72 shrink-0 flex-col border-r border-zinc-200 bg-white">
+            <div class="border-b border-zinc-200 p-3">
+                <input type="search" placeholder="Rechercher un bloc" class="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-500" data-action="input->builder-canvas#filter">
+            </div>
+            <div class="flex-1 space-y-5 overflow-y-auto p-3">
+                {% for category, items in this.library() %}
+                    <section>
+                        <h2 class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">{{ category }}</h2>
+                        <div data-library class="space-y-1">
+                            {% for block in items %}
+                                <button type="button" data-builder-item data-block-type="{{ block.name }}" data-label="{{ block.label }}" class="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-100" data-action="click->live#action" data-live-action-param="insert" data-live-type-param="{{ block.name }}">
+                                    {{ ux_icon(block.icon, {class: 'size-4 text-zinc-500'}) }}
+                                    <span>{{ block.label }}</span>
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <main class="min-w-0 flex-1 overflow-y-auto bg-white">
+            <div class="min-h-full">
+                <div data-canvas-root data-parent-id="" class="flex min-h-[70vh] flex-col font-nunito {{ builder_canvas_class }}">
+                    {% if this.tree() is empty %}
+                        <p class="pointer-events-none py-24 text-center text-sm text-zinc-400">Glissez un bloc ici, ou cliquez dans la bibliothèque.</p>
+                    {% endif %}
+                    {% include '@PageBuilder/node.html.twig' with {blocks: this.tree(), preview: true, selectedId: selectedId} %}
+                </div>
+            </div>
+        </main>
+
+        <aside class="{{ inspectorFull ? 'absolute inset-0 z-30' : 'min-w-xs max-w-xs shrink-0' }} overflow-y-auto border-l border-zinc-200 bg-white p-4">
+            <div class="{{ inspectorFull ? 'mx-auto max-w-5xl' : '' }}">
+            <div class="mb-4 flex items-start justify-between gap-3">
+                <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Inspecteur</p>
+                    {% set definition = this.selectedDefinition() %}
+                    {% if definition %}
+                        <h2 class="mt-1 text-sm font-semibold">{{ definition.label }}</h2>
+                    {% endif %}
+                </div>
+                <button type="button" class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-zinc-300 px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50" data-action="live#action" data-live-action-param="toggleInspector">
+                    {{ ux_icon(inspectorFull ? 'heroicons:arrows-pointing-in' : 'heroicons:arrows-pointing-out', {class: 'size-4'}) }}
+                    {{ inspectorFull ? 'Réduire' : 'Agrandir' }}
+                </button>
+            </div>
+            {% if definition %}
+                {% if builder_joli_admin %}
+                    {% form_theme form '@JoliMediaEasyAdmin/form/form_theme.html.twig' '@PageBuilder/form/theme.html.twig' '@LiveComponent/form_theme.html.twig' %}
+                {% else %}
+                    {% form_theme form '@PageBuilder/form/theme.html.twig' '@LiveComponent/form_theme.html.twig' %}
+                {% endif %}
+                {{ form_start(form, {attr: {onsubmit: 'event.preventDefault()'}}) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            {% else %}
+                <p class="pt-8 text-center text-sm text-zinc-400">Sélectionnez un bloc pour modifier ses champs.</p>
+            {% endif %}
+            </div>
+        </aside>
+    </div>
+</div>

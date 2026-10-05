@@ -1,0 +1,188 @@
+{% use 'form_div_layout.html.twig' %}
+
+{% block form_widget %}
+    {% if compound and inspector_groups is defined %}
+        {% if inspector_groups|length > 1 %}
+            <div data-controller="builder-inspector">
+                <div class="mb-4 flex flex-wrap gap-1">
+                    {% for group in inspector_groups %}
+                        <button type="button" data-builder-inspector-target="tab" data-action="builder-inspector#show" class="rounded-md px-2.5 py-1.5 text-xs font-medium {{ loop.first ? 'bg-zinc-900 text-white' : 'text-zinc-600' }}">{{ group.label }}</button>
+                    {% endfor %}
+                </div>
+                {% for group in inspector_groups %}
+                    {{ block('inspector_group') }}
+                {% endfor %}
+            </div>
+        {% else %}
+            {% set group = inspector_groups[0] %}
+            {{ block('inspector_group') }}
+        {% endif %}
+    {% elseif compound %}
+        {{ block('form_widget_compound') }}
+    {% else %}
+        {{ block('form_widget_simple') }}
+    {% endif %}
+{% endblock %}
+
+{% block inspector_group %}
+    <div {% if inspector_groups|length > 1 %}data-builder-inspector-target="panel" class="{{ loop.first ? '' : 'hidden' }} grid items-start"{% else %}class="grid items-start"{% endif %} style="grid-template-columns: repeat({{ group.columns }}, minmax(0, 1fr)); column-gap: 0.75rem">
+        {% for name in group.fields %}
+            <div style="grid-column: {{ form[name].vars.inspector_column|default(1) }} / span {{ form[name].vars.inspector_span|default(1) }}">
+                {{ form_row(form[name]) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block form_row %}
+    <div class="mb-4">
+        {{ form_label(form) }}
+        {{ form_widget(form) }}
+        {{ form_help(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block form_label %}
+    {% if label is not same as(false) %}
+        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %} class="mb-1 block text-xs font-medium text-zinc-600">{{ label|trans({}, translation_domain) }}</label>
+    {% endif %}
+{% endblock %}
+
+{% block form_help %}
+    {% if help is defined and help %}
+        <p class="mt-1 text-xs text-zinc-500">{{ help|trans(help_translation_parameters|default({}), translation_domain|default(null)) }}</p>
+    {% endif %}
+{% endblock %}
+
+{% block form_errors %}
+    {% if errors|length %}
+        <ul class="mt-1 space-y-1 text-xs text-red-600">
+            {% for error in errors %}
+                <li>{{ error.message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block form_widget_simple %}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200')|trim}) %}
+    <input type="{{ type|default('text') }}" {{ block('widget_attributes') }} value="{{ value }}"/>
+{% endblock %}
+
+{% block textarea_widget %}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200')|trim}) %}
+    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
+{% endblock %}
+
+{% block choice_widget_collapsed %}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200')|trim}) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block builder_icon_widget %}
+    {% if icon_autocomplete|default(false) %}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200')|trim}) %}
+        <div data-controller="builder-icon" data-action="autocomplete:connect->builder-icon#refresh">
+        <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
+            {% if placeholder is not none %}
+                <option value=""{% if required and value is empty %} selected="selected"{% endif %}>{{ placeholder != '' ? (translation_domain is same as(false) ? placeholder : placeholder|trans({}, translation_domain)) }}</option>
+            {% endif %}
+            {% for choice in choices %}
+                {% if choice.value %}
+                    {% set icon_html %}{%- apply spaceless -%}
+                        <span class="inline-flex">{{ ux_icon(choice.value, {class: 'size-4', 'aria-hidden': 'true'}) }}</span><span class="sr-only">{{ choice.label }}</span>
+                    {%- endapply -%}{% endset %}
+                    <option value="{{ choice.value }}"{% if choice.attr %}{% with {attr: choice.attr} %}{{ block('attributes') }}{% endwith %}{% endif %}{% if choice is selectedchoice(value) %} selected="selected"{% endif %}>{{ icon_html|e }}</option>
+                {% else %}
+                    <option value="{{ choice.value }}"{% if choice is selectedchoice(value) %} selected="selected"{% endif %}>{{ choice.label }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        </div>
+    {% elseif choices is defined %}
+        {{ parent() }}
+    {% else %}
+        {{ block('form_widget_simple') }}
+    {% endif %}
+{% endblock %}
+
+{% block button_widget %}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium')|trim}) %}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ label|default(translation_domain is same as(false) ? name : name|trans({}, translation_domain)) }}</button>
+{% endblock %}
+
+{% block live_collection_entry_row %}
+    <div class="mb-3 rounded-md border border-zinc-200 p-3">
+        {{ form_widget(form) }}
+        {% if button_delete is defined and not button_delete.rendered %}
+            <div class="mt-2">{{ form_widget(button_delete) }}</div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block builder_margin_widget %}
+    <div class="grid grid-cols-2 gap-x-3">
+        {% for child in form %}
+            <div>
+                {{ form_label(child) }}
+                {{ form_widget(child) }}
+                {{ form_errors(child) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block builder_margin_side_widget %}
+    <input type="range" min="0" max="128" step="4" {{ block('widget_attributes') }}>
+{% endblock %}
+
+{% block builder_image_widget %}
+    <div class="space-y-2" data-controller="builder-upload" data-builder-upload-url-value="{{ path('page_builder_media') }}" data-builder-upload-token-value="{{ csrf_token('builder_media') }}">
+        <input type="text" {{ block('widget_attributes') }} class="w-full rounded-md border border-zinc-300 bg-zinc-50 px-3 py-2 text-xs text-zinc-600" readonly data-builder-upload-target="input">
+        <img src="{{ builder_media_url(value) }}" alt="" class="max-h-36 rounded-md border border-zinc-200 {% if not value %}hidden{% endif %}" data-builder-upload-target="preview">
+        <div class="dropzone-container" data-controller="symfony--ux-dropzone--dropzone">
+            <input type="file" accept="image/jpeg,image/png,image/gif,image/webp" class="dropzone-input" data-builder-upload-target="file" data-action="change->builder-upload#upload" data-symfony--ux-dropzone--dropzone-target="input">
+            <div class="dropzone-placeholder" data-symfony--ux-dropzone--dropzone-target="placeholder">Déposer une image</div>
+            <div class="dropzone-preview" data-symfony--ux-dropzone--dropzone-target="preview" style="display: none">
+                <button type="button" class="dropzone-preview-button" data-symfony--ux-dropzone--dropzone-target="previewClearButton"></button>
+                <div class="dropzone-preview-image" data-symfony--ux-dropzone--dropzone-target="previewImage"></div>
+                <div class="dropzone-preview-filename" data-symfony--ux-dropzone--dropzone-target="previewFilename"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block builder_content_row %}
+    <div class="mb-4">
+        {{ form_label(form) }}
+        {{ form_widget(form) }}
+        {{ form_help(form) }}
+    </div>
+{% endblock %}
+
+{% block builder_content_widget %}
+    {% include '@PageBuilder/_styles.html.twig' %}
+    {% if errors|length %}
+        <ul class="mb-3 space-y-1 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {% for error in errors %}
+                <li>{{ error.message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <div data-controller="builder-field">
+        <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" data-builder-field-target="input">
+        <div class="flex items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+            <div>
+                <p class="text-sm font-medium text-zinc-800">Contenu de la page</p>
+                <p class="text-xs text-zinc-500">{{ document.blocks|default([])|length }} bloc(s) au premier niveau</p>
+            </div>
+            <button type="button" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" data-action="builder-field#open">Ouvrir le builder</button>
+        </div>
+        <template data-builder-field-target="blueprint">
+            <dialog id="{{ id }}-dialog" class="builder-dialog">
+                {{ component('BuilderWorkspace', { document: document, targetInput: id }) }}
+            </dialog>
+        </template>
+    </div>
+{% endblock %}

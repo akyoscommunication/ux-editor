@@ -1,0 +1,3 @@
+{% set url = url|default('') %}
+{% set href = url starts with 'https://' or url starts with 'http://' or url starts with '/' ? url : '#' %}
+<a href="{{ href }}" class="inline-flex rounded-md px-4 py-2 text-sm font-medium {{ class|default('') }} {{ style|default('primary') == 'secondary' ? 'border border-zinc-300 text-zinc-800' : 'bg-zinc-900 text-white' }}">{{ label|default('Bouton') }}</a>

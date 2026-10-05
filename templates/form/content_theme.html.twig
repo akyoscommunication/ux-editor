@@ -1,0 +1,25 @@
+{% block builder_content_widget %}
+    {% include '@PageBuilder/_styles.html.twig' %}
+    {% if errors|length %}
+        <ul class="mb-3 space-y-1 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {% for error in errors %}
+                <li>{{ error.message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <div data-controller="builder-field">
+        <input type="hidden" id="{{ id }}" name="{{ full_name }}" value="{{ value }}" data-builder-field-target="input">
+        <div class="flex items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+            <div>
+                <p class="text-sm font-medium text-zinc-800">Contenu de la page</p>
+                <p class="text-xs text-zinc-500">{{ document.blocks|default([])|length }} bloc(s) au premier niveau</p>
+            </div>
+            <button type="button" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white" data-action="builder-field#open">Ouvrir le builder</button>
+        </div>
+        <template data-builder-field-target="blueprint">
+            <dialog id="{{ id }}-dialog" class="builder-dialog">
+                {{ component('BuilderWorkspace', { document: document, targetInput: id }) }}
+            </dialog>
+        </template>
+    </div>
+{% endblock %}

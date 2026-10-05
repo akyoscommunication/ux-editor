@@ -1,0 +1,10 @@
+<figure>
+    {% if image %}
+        {{ builder_media(image, alt, 'w-full rounded-lg') }}
+    {% else %}
+        <div class="flex h-40 items-center justify-center rounded-lg bg-zinc-100 text-sm text-zinc-400">Image</div>
+    {% endif %}
+    {% if caption %}
+        <figcaption class="mt-2 text-sm text-zinc-500">{{ caption }}</figcaption>
+    {% endif %}
+</figure>
