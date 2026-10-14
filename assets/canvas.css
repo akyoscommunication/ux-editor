@@ -1,8 +1,9 @@
 /* Utilitaires du front, limités au canvas. `@reference` reprend le thème
-   (couleurs, rayons, police) sans recopier app.css dans l’admin. */
-@reference "../../../assets/styles/app.css";
+   (couleurs, rayons, police) sans recopier app.css dans l’admin.
+   Chemins relatifs à l’installation Composer : vendor/akyoscommunication/ux-editor/assets. */
+@reference "../../../../assets/styles/app.css";
 
-@source "../../../templates";
+@source "../../../../templates";
 @source "../templates";
 
 @scope ([data-canvas-root]) {

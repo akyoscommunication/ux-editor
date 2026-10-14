@@ -40,10 +40,12 @@ final class DataClassFormPass implements CompilerPassInterface
 
         foreach ($container->getDefinitions() as $definition) {
             $class = $definition->getClass();
-            if (!\is_string($class) || isset($services[$class]) || !class_exists($class)) {
+            if (!\is_string($class) || isset($services[$class])) {
                 continue;
             }
-            $reflection = $container->getReflectionClass($class);
+            // Pas de class_exists() : un service dont le parent manque (ex. liip FilterHelper
+            // sans symfony/templating) déclenche une erreur fatale. getReflectionClass(…, false) renvoie null.
+            $reflection = $container->getReflectionClass($class, false);
             if (!$reflection || !$reflection->getAttributes(AsFormType::class)) {
                 continue;
             }
