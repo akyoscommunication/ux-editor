@@ -109,7 +109,7 @@
 
 {% block button_widget %}
     {% set attr = attr|merge({class: (attr.class|default('') ~ ' inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium')|trim}) %}
-    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ label|default(translation_domain is same as(false) ? name : name|trans({}, translation_domain)) }}</button>
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{% set label = label|default(name) %}{{ translation_domain is same as(false) ? label : label|trans({}, translation_domain) }}</button>
 {% endblock %}
 
 {% block live_collection_entry_row %}

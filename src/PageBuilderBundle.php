@@ -132,6 +132,8 @@ final class PageBuilderBundle extends AbstractBundle
                 'builder_canvas_class' => $canvasClass,
                 'builder_canvas_fonts' => $canvasFonts,
             ],
+            // Sans ce thème, ContentType s'affiche comme un simple input hidden.
+            'form_themes' => ['@PageBuilder/form/content_theme.html.twig'],
         ]);
 
         $container->extension('framework', [
