@@ -3,7 +3,6 @@
     "type": "symfony-bundle",
     "description": "Page builder style Gutenberg, blocs Symfony et formulaires par attributs.",
     "license": "proprietary",
-    "version": "2.0.0",
     "require": {
         "php": ">=8.4",
         "doctrine/doctrine-bundle": "^2.13 || ^3.0",
