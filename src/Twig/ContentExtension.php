@@ -81,6 +81,12 @@ final class ContentExtension
         return Margin::style($margin);
     }
 
+    #[AsTwigFunction('builder_has_margin')]
+    public function hasMargin(mixed $margin): bool
+    {
+        return Margin::normalize($margin) !== Margin::zero();
+    }
+
     #[AsTwigFunction('builder_media_url')]
     public function mediaUrl(?string $path): string
     {
