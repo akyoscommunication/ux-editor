@@ -1,3 +1,4 @@
+/* stimulusFetch: 'lazy' */
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
@@ -8,7 +9,14 @@ export default class extends Controller {
             if (!event.detail || event.detail.input !== this.inputTarget.id) {
                 return;
             }
-            this.inputTarget.value = JSON.stringify(event.detail.document);
+            const value = JSON.stringify(event.detail.document);
+            if (value === this.inputTarget.value) {
+                return;
+            }
+            this.inputTarget.value = value;
+            // Un formulaire Live (data-model) ne lit un champ qu'à son change.
+            // Sans lui, l'enregistrement renvoyait l'ancien document.
+            this.inputTarget.dispatchEvent(new Event('change', { bubbles: true }));
         };
         window.addEventListener('builder:document', this.onDocument);
         // JoliMedia fait `new Event('change')` sans bubbles. Le builder
