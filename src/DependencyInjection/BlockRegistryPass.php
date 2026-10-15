@@ -19,6 +19,7 @@ final class BlockRegistryPass implements CompilerPassInterface
         }
 
         $definitions = [];
+        $defaultBlocks = !$container->hasParameter('page_builder.default_blocks') || $container->getParameter('page_builder.default_blocks');
         // findTaggedServiceIds skips container.excluded. #[AsFormType] adds that tag,
         // which would also hide the Twig/Live component from TwigComponentPass.
         foreach ($container->getDefinitions() as $id => $definition) {
@@ -27,6 +28,10 @@ final class BlockRegistryPass implements CompilerPassInterface
             }
             $tag = $definition->getTag('builder.block')[0];
             $class = $definition->getClass() ?? $id;
+            // Sans composant cloné ni entrée au registre, le bloc n'existe ni dans la bibliothèque ni au rendu.
+            if (!$defaultBlocks && str_starts_with($class, 'Builder\\PageBuilderBundle\\Block\\')) {
+                continue;
+            }
             $reflection = $container->getReflectionClass($class);
             $componentAttributes = $reflection->getAttributes(AsTwigComponent::class, \ReflectionAttribute::IS_INSTANCEOF);
             $component = '';

@@ -26,7 +26,9 @@
             </div>
         </article>
     {% else %}
-        <div style="{{ builder_margin_style(block.margin|default({})) }}">
+        {# Sans marge, le bloc est rendu nu : le HTML du front reste celui du template. #}
+        {% set spaced = builder_has_margin(block.margin|default({})) %}
+        {% if spaced %}<div style="{{ builder_margin_style(block.margin) }}">{% endif %}
             {% if block.definition.container %}
                 <div class="grid gap-6" style="grid-template-columns: repeat({{ block.slots|length }}, minmax(0, 1fr))">
                     {% for children in block.slots %}
@@ -38,6 +40,6 @@
             {% else %}
                 {% include block.definition.template with block.view|merge({preview: false}) only %}
             {% endif %}
-        </div>
+        {% if spaced %}</div>{% endif %}
     {% endif %}
 {% endfor %}

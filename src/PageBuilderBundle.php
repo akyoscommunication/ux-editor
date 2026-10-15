@@ -30,6 +30,10 @@ final class PageBuilderBundle extends AbstractBundle
         $definition->rootNode()
             ->children()
                 ->booleanNode('joli_media')->defaultFalse()->end()
+                ->booleanNode('default_blocks')
+                    ->info('Propose les blocs livrés avec le bundle (Titre, Paragraphe, Bouton…). false : seuls les blocs de l’application.')
+                    ->defaultTrue()
+                ->end()
                 ->arrayNode('canvas')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -103,6 +107,7 @@ final class PageBuilderBundle extends AbstractBundle
         }
         $container->parameters()->set('page_builder.joli_media', $config['joli_media']);
         $container->parameters()->set('page_builder.joli_admin', $joliAdmin);
+        $container->parameters()->set('page_builder.default_blocks', $config['default_blocks']);
         $container->parameters()->set('page_builder.margin', Margin::normalize($config['margin']));
         $container->parameters()->set('page_builder.canvas_stylesheet', $config['canvas']['stylesheet']);
         $container->parameters()->set('page_builder.icons', self::normalizeIcons($config['icons']));
